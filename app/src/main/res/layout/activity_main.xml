@@ -38,7 +38,8 @@
         app:iconGravity="textStart"
         app:iconTint="@color/text_color"
         app:iconPadding="@dimen/dp_10"
-        app:cornerRadius="@dimen/dp_16"/>
+        app:cornerRadius="@dimen/dp_16"
+        android:foreground="?attr/selectableItemBackground"/>
 
     <Button
         android:id="@+id/mediateka"
@@ -57,7 +58,8 @@
         app:iconGravity="textStart"
         app:iconTint="@color/text_color"
         app:iconPadding="@dimen/dp_10"
-        app:cornerRadius="@dimen/dp_16"/>
+        app:cornerRadius="@dimen/dp_16"
+        android:foreground="?attr/selectableItemBackground"/>
 
     <Button
         android:id="@+id/settings"
@@ -76,5 +78,6 @@
         app:iconGravity="textStart"
         app:iconTint="@color/text_color"
         app:iconPadding="@dimen/dp_10"
-        app:cornerRadius="@dimen/dp_16"/>
+        app:cornerRadius="@dimen/dp_16"
+        android:foreground="?attr/selectableItemBackground"/>
 </LinearLayout>
