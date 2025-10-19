@@ -8,4 +8,11 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="tint">@color/white</item>
     </style>
+
+    <style name="Theme.PlaylistMaker.Search" parent="Theme.PlaylistMaker.Settings">
+        <item name="colorPrimary">@color/light_black</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/light_black</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+    </style>
 </resources>

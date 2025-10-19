@@ -4,26 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:background="?attr/colorPrimary"
-    style="@style/LinearLayoutVertical">
+    style="@style/LayoutVertical">
 
-    <LinearLayout
-        android:layout_marginBottom="@dimen/dp_24"
-        style="@style/LinearLayoutHorizontal">
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/back"
-            android:layout_marginTop="@dimen/dp_4"
-            android:foreground="?attr/selectableItemBackground"
-            app:tint="?attr/tint" />
-
-        <FrameLayout style="@style/LayoutWrap">
-            <TextView
-                android:text="@string/settings"
-                style="@style/TextViewGlobal.Setting"/>
-        </FrameLayout>
-    </LinearLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_settings"
+        app:title="@string/settings"
+        app:titleTextAppearance="@style/MaterialToolBar.Settings.Title"
+        style="@style/MaterialToolBar"/>
 
     <FrameLayout
         android:layout_width="match_parent"

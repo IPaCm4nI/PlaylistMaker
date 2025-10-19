@@ -13,7 +13,9 @@
         >
         <activity
             android:name=".SearchActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.PlaylistMaker.Search"
+            />
         <activity
             android:name=".MediatekaActivity"
             android:exported="false" />

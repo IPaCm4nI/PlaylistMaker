@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-    style="@style/LinearLayoutVertical"
+    style="@style/LayoutVertical"
     android:background="?attr/colorPrimary"
     android:orientation="vertical">
 
@@ -16,7 +16,7 @@
     </FrameLayout>
 
     <Button
-        android:id="@+id/search"
+        android:id="@+id/base_search"
         style="@style/ButtonMainMenu"
         android:text="@string/search"
         app:icon="@drawable/search" />
