@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.google.android.material.appbar.MaterialToolbar
+import androidx.core.net.toUri
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,23 +34,23 @@ class SettingsActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             val intentShare = Intent(Intent.ACTION_SEND)
             intentShare.type = "text/plain"
-            intentShare.putExtra(Intent.EXTRA_TEXT,"https://practicum.yandex.ru/android-developer/")
-            startActivity(Intent.createChooser(intentShare, "Поделиться через"))
+            intentShare.putExtra(Intent.EXTRA_TEXT,getString(R.string.link_to_praktikum))
+            startActivity(Intent.createChooser(intentShare, getString(R.string.title_share)))
         }
 
         val supportButton = findViewById<TextView>(R.id.support)
         supportButton.setOnClickListener {
             val intentSupport = Intent(Intent.ACTION_SENDTO)
             intentSupport.data = Uri.parse("mailto:")
-            intentSupport.putExtra(Intent.EXTRA_EMAIL, arrayOf("verigindanya@yandex.ru"))
-            intentSupport.putExtra(Intent.EXTRA_SUBJECT, "Сообщение разработчикам и разработчицам приложения Playlist Maker")
-            intentSupport.putExtra(Intent.EXTRA_TEXT, "Спасибо разработчикам и разработчицам за крутое приложение!")
+            intentSupport.putExtra(Intent.EXTRA_EMAIL, arrayOf(R.string.support_mail))
+            intentSupport.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.subject_mail))
+            intentSupport.putExtra(Intent.EXTRA_TEXT, getString(R.string.text_mail))
             startActivity(intentSupport)
         }
 
         val contractButton = findViewById<TextView>(R.id.contract)
         contractButton.setOnClickListener {
-            val intentSupport = Intent(Intent.ACTION_VIEW, Uri.parse("https://yandex.ru/legal/practicum_offer/ru/"))
+            val intentSupport = Intent(Intent.ACTION_VIEW, getString(R.string.link_offer).toUri())
             startActivity(intentSupport)
         }
 

@@ -1,10 +1,12 @@
 package com.example.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -34,6 +36,8 @@ class SearchActivity : AppCompatActivity() {
 
         val toolbarSearchId = findViewById<MaterialToolbar>(R.id.toolbar_search)
         toolbarSearchId.setNavigationOnClickListener {
+            hideKeyboard()
+
             val mainIntent = Intent(this, MainActivity::class.java)
             startActivity(mainIntent)
         }
@@ -56,6 +60,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         editTextId.addTextChangedListener(searchTextWatcher)
+
+        showKeyboard(editTextId)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -76,6 +82,22 @@ class SearchActivity : AppCompatActivity() {
             View.GONE
         } else {
             View.VISIBLE
+        }
+    }
+
+    private fun showKeyboard(editText: EditText) {
+        editText.requestFocus()
+        editText.post {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val view = currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }
