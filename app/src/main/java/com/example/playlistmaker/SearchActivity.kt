@@ -60,8 +60,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
         editTextId.addTextChangedListener(searchTextWatcher)
-
-        showKeyboard(editTextId)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -82,14 +80,6 @@ class SearchActivity : AppCompatActivity() {
             View.GONE
         } else {
             View.VISIBLE
-        }
-    }
-
-    private fun showKeyboard(editText: EditText) {
-        editText.requestFocus()
-        editText.post {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 
