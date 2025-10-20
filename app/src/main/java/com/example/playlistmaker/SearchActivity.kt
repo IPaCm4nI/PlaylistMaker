@@ -46,6 +46,7 @@ class SearchActivity : AppCompatActivity() {
         val clearButtonId = findViewById<ImageView>(R.id.clearIcon)
         clearButtonId.setOnClickListener {
             editTextId.setText("")
+            hideKeyboard()
         }
 
         val searchTextWatcher = object : TextWatcher {
