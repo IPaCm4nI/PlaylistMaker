@@ -134,9 +134,10 @@
     </style>
 
     <style name="ImageView.Search" parent="LayoutWrap">
-        <item name="android:layout_gravity">end|center_vertical</item>
-        <item name="android:paddingTop">@dimen/dp_8.5</item>
-        <item name="android:paddingEnd">@dimen/dp_21</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:paddingTop">@dimen/dp_8</item>
+        <item name="android:paddingBottom">@dimen/dp_8</item>
+        <item name="android:paddingRight">@dimen/dp_16</item>
         <item name="android:visibility">gone</item>
     </style>
 </resources>

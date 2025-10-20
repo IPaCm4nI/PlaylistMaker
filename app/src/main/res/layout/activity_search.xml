@@ -23,9 +23,9 @@
 
             <ImageView
                 android:id="@+id/clearIcon"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="@color/light_black"
-                style="@style/ImageView.Search"/>
+                android:src="@drawable/clear"
+                style="@style/ImageView.Search"
+                app:tint="?attr/colorOnSecondary" />
         </FrameLayout>
     </LinearLayout>
 
