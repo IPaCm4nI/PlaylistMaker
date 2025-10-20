@@ -12,18 +12,12 @@
         app:titleTextAppearance="@style/MaterialToolBar.Settings.Title"
         style="@style/MaterialToolBar"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:paddingTop="@dimen/dp_24"
+    <Switch
+        android:layout_height="wrap_content"
+        android:text="@string/theme"
+        android:layout_marginTop="@dimen/dp_24"
         android:paddingBottom="@dimen/dp_21"
-        style="@style/LayoutWrap">
-        <TextView
-            android:text="@string/theme"
-            style="@style/TextViewDefault.Switch"/>
-        <Switch
-            android:layout_gravity="end"
-            style="@style/LayoutWrap"/>
-    </FrameLayout>
+        style="@style/TextViewDefault.Switch" />
 
     <TextView
         android:id="@+id/share"

@@ -6,14 +6,10 @@
     android:background="?attr/colorPrimary"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/TextViewGlobal.Main"
-            android:text="@string/app_name" />
-    </FrameLayout>
+    <TextView
+        style="@style/TextViewGlobal.Main"
+        android:text="@string/app_name" />
 
     <Button
         android:id="@+id/base_search"

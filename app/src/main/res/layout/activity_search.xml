@@ -12,21 +12,17 @@
         app:titleTextAppearance="@style/MaterialToolBar.Search.Title"
         style="@style/MaterialToolBar"/>
 
-    <LinearLayout
-        style="@style/LayoutHorizontal">
+    <FrameLayout
+        style="@style/LayoutHorizontal" >
+        <EditText
+            android:id="@+id/search"
+            style="@style/EditText.Search" />
 
-        <FrameLayout
-            style="@style/LayoutHorizontal" >
-            <EditText
-                android:id="@+id/search"
-                style="@style/EditText.Search" />
-
-            <ImageView
-                android:id="@+id/clearIcon"
-                android:src="@drawable/clear"
-                style="@style/ImageView.Search"
-                app:tint="?attr/colorOnSecondary" />
-        </FrameLayout>
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/clearIcon"
+            android:src="@drawable/clear"
+            style="@style/ImageView.Search"
+            app:tint="?attr/colorOnSecondary" />
+    </FrameLayout>
 
 </LinearLayout>
