@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val buttonSearch = findViewById<Button>(R.id.search)
+        val buttonSearch = findViewById<Button>(R.id.base_search)
         val buttonSearchClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 val searchIntent = Intent(this@MainActivity, SearchActivity::class.java)

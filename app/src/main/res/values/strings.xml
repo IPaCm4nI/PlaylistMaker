@@ -7,4 +7,10 @@
     <string name="share">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="contract">Пользовательское соглашение</string>
+    <string name="link_to_praktikum">https://practicum.yandex.ru/android-developer/</string>
+    <string name="title_share">Поделиться через</string>
+    <string name="support_mail">verigindanya@yandex.ru</string>
+    <string name="subject_mail">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="text_mail">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="link_offer">https://yandex.ru/legal/practicum_offer/ru/</string>
 </resources>
