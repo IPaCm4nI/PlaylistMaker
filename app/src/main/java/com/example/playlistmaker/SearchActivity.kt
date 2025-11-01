@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 
@@ -81,7 +80,7 @@ class SearchActivity : AppCompatActivity() {
                 val query = editTextId.text.toString().trim()
 
                 if (query.isNotEmpty()) {
-                    recyclerViewSongs.adapter = AdapterListSongs(listSongs)
+                    recyclerViewSongs.adapter = Adapter(listSongs)
                 } else {
                     recyclerViewSongs.adapter = null
                 }

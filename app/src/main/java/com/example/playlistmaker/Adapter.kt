@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class AdapterListSongs(
+class Adapter(
     private val listSongs: ArrayList<Track>
-) : RecyclerView.Adapter<ViewHolderListSongs> () {
+) : RecyclerView.Adapter<ViewHolder> () {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderListSongs {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.song, parent, false)
-        return ViewHolderListSongs(view)
+        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolderListSongs, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(listSongs[position])
     }
 
