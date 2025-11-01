@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    style="@style/LayoutHorizontal">
+
+    <ImageView
+        android:id="@+id/artworkUrl100"
+        style="@style/ImageView.Song"
+        tools:src="@drawable/placeholder"/>
+
+    <LinearLayout
+        style="@style/LayoutVertical"
+        android:layout_width="@dimen/dp_0"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/trackName"
+            tools:text="Yesterday (Remastered 2009)"
+            style="@style/TextView.Song.Name" />
+
+        <LinearLayout
+            style="@style/LayoutWrap"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/dp_1"
+            android:layout_marginBottom="@dimen/dp_14">
+
+            <TextView
+                android:id="@+id/artistName"
+                style="@style/TextView.Song.Secondary"
+                android:layout_width="@dimen/dp_0"
+                android:layout_weight="1"
+                tools:text="The Beatles" />
+            
+            <ImageView
+                style="@style/LayoutWrap"
+                android:src="@drawable/dot" />
+
+            <TextView
+                android:id="@+id/trackTime"
+                style="@style/TextView.Song.Secondary"
+                tools:text="2:55" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        style="@style/ImageView.Info"
+        android:src="@drawable/contract" />
+</LinearLayout>
