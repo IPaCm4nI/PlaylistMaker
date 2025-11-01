@@ -8,12 +8,11 @@
     <ImageView
         android:id="@+id/artworkUrl100"
         style="@style/ImageView.Song"
-        android:scaleType="centerCrop"
         tools:src="@drawable/placeholder"/>
 
     <LinearLayout
         style="@style/LayoutVertical"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dp_0"
         android:layout_weight="1">
 
         <TextView
@@ -29,10 +28,10 @@
 
             <TextView
                 android:id="@+id/artistName"
-                tools:text="The Beatles"
                 style="@style/TextView.Song.Secondary"
-                android:layout_width="0dp"
-                android:layout_weight="1" />
+                android:layout_width="@dimen/dp_0"
+                android:layout_weight="1"
+                tools:text="The Beatles" />
             
             <ImageView
                 style="@style/LayoutWrap"
@@ -40,8 +39,8 @@
 
             <TextView
                 android:id="@+id/trackTime"
-                tools:text="2:55"
-                style="@style/TextView.Song.Secondary" />
+                style="@style/TextView.Song.Secondary"
+                tools:text="2:55" />
 
         </LinearLayout>
     </LinearLayout>
