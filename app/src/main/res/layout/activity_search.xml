@@ -16,6 +16,7 @@
         style="@style/LayoutHorizontal" >
         <EditText
             android:id="@+id/search"
+            android:imeOptions="actionDone"
             style="@style/EditText.Search" />
 
         <ImageView
@@ -24,5 +25,12 @@
             style="@style/ImageView.Search"
             app:tint="?attr/colorOnSecondary" />
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listSongs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginTop="@dimen/dp_16"/>
 
 </LinearLayout>
