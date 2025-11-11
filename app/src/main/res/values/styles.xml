@@ -131,6 +131,8 @@
         <item name="android:textSize">@dimen/dp_16</item>
         <item name="android:background">@drawable/edittext_border_radius</item>
         <item name="android:paddingEnd">@dimen/dp_40</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:singleLine">true</item>
     </style>
 
     <style name="ImageView.Search" parent="LayoutWrap">

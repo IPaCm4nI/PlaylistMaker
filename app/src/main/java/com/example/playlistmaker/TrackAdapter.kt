@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackAdapter(
-    private val listSongs: List<Track>
-) : RecyclerView.Adapter<TrackViewHolder> () {
+class TrackAdapter: RecyclerView.Adapter<TrackViewHolder> () {
+
+    var listSongs: MutableList<Track> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.song, parent, false)
-        return TrackViewHolder(view)
+        return TrackViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
