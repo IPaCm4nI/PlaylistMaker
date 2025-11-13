@@ -31,14 +31,14 @@
                 style="@style/TextView.Song.Secondary"
                 android:layout_width="@dimen/dp_0"
                 android:layout_weight="1"
-                tools:text="The Beatles" />
+                tools:text="Shunji Iwai" />
             
             <ImageView
                 style="@style/LayoutWrap"
                 android:src="@drawable/dot" />
 
             <TextView
-                android:id="@+id/trackTime"
+                android:id="@+id/trackTimeMillis"
                 style="@style/TextView.Song.Secondary"
                 tools:text="2:55" />
 
