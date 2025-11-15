@@ -2,24 +2,51 @@ package com.example.playlistmaker
 
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private var searchText: String = SEARCH_DEF
+    private val baseUrl = "https://itunes.apple.com"
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val songService = retrofit.create(SongApi::class.java)
+
+    private val trackAdapter = TrackAdapter()
+    private lateinit var placeholderId: TextView
+    private lateinit var placeholderImage: ImageView
+    private lateinit var toolbarSearchId: MaterialToolbar
+    private lateinit var recyclerViewSongs: RecyclerView
+    private lateinit var editTextId: EditText
+    private lateinit var clearButtonId: ImageView
+    private lateinit var updateButton: Button
+
 
     companion object {
         const val KEY_SEARCH = "SEARCH"
@@ -36,7 +63,9 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        val toolbarSearchId = findViewById<MaterialToolbar>(R.id.toolbar_search)
+        placeholderId = findViewById(R.id.placeholderMessage)
+        placeholderImage = findViewById(R.id.placeholderImage)
+        toolbarSearchId = findViewById(R.id.toolbar_search)
         toolbarSearchId.setNavigationOnClickListener {
             hideKeyboard()
 
@@ -44,44 +73,35 @@ class SearchActivity : AppCompatActivity() {
             startActivity(mainIntent)
         }
 
-        val recyclerViewSongs = findViewById<RecyclerView>(R.id.listSongs)
-        val listSongs: List<Track> = listOf(
-            Track("Smells Like Teen Spirit", "Nirvana", "5:01", "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"),
-            Track("Billie Jean", "Michael Jackson", "4:35", "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"),
-            Track("Stayin' Alive", "Bee Gees", "4:10", "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"),
-            Track("Whole Lotta Love", "Led Zeppelin", "5:33", "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"),
-            Track("Sweet Child O'Mine", "Guns N' Roses", "5:03", "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg")
-        )
+        recyclerViewSongs = findViewById(R.id.listSongs)
 
-        val editTextId = findViewById<EditText>(R.id.search)
-        val clearButtonId = findViewById<ImageView>(R.id.clearIcon)
+        recyclerViewSongs.adapter = trackAdapter
+
+        editTextId = findViewById(R.id.search)
+        clearButtonId = findViewById(R.id.clearIcon)
         clearButtonId.setOnClickListener {
             editTextId.setText("")
-            recyclerViewSongs.adapter = null
+            trackAdapter.updateItem(mutableListOf())
+
             hideKeyboard()
+            placeholderId.isVisible = false
+            placeholderImage.isVisible = false
+            updateButton.isVisible = false
+
         }
 
-        val searchTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchText = s.toString()
-                clearButtonId.isVisible = !s.isNullOrEmpty()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
+        editTextId.doOnTextChanged { text, start, before, count ->
+            searchText = text.toString()
+            clearButtonId.isVisible = !text.isNullOrEmpty()
         }
-
-        editTextId.addTextChangedListener(searchTextWatcher)
 
         editTextId.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val query = editTextId.text.toString().trim()
+                val query = normalizeString(editTextId.text.toString())
+                searchText = query
 
                 if (query.isNotEmpty()) {
-                    recyclerViewSongs.adapter = TrackAdapter(listSongs)
-                } else {
-                    recyclerViewSongs.adapter = null
+                    findSong(query)
                 }
                 true
             } else {
@@ -89,6 +109,52 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        updateButton = findViewById(R.id.bUpdate)
+        updateButton.setOnClickListener {
+            if (searchText.isNotEmpty()) {
+                findSong(searchText)
+            }
+        }
+    }
+
+    private fun normalizeString(query: String?): String {
+        if (query == null) return ""
+
+        return query
+            .replace(Regex("[^a-zA-Zа-яА-Я0-9\\s'\".,&-]"), "")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+    }
+
+    private fun findSong(query: String) {
+        songService.getSongs(query)
+            .enqueue(object: Callback<SongResponse> {
+                override fun onResponse(
+                    call: Call<SongResponse?>,
+                    response: Response<SongResponse?>
+                ) {
+                    when(response.code()) {
+                        200 -> {
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                trackAdapter.updateItem(response.body()?.results!!.toMutableList())
+                                showPage("")
+                            } else {
+                                showPage("not_found")
+                            }
+                        }
+                        else -> {
+                            showPage("not_connection")
+                        }
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<SongResponse?>,
+                    t: Throwable
+                ) {
+                    showPage("not_connection")
+                }
+            })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -100,15 +166,35 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         searchText = savedInstanceState.getString(KEY_SEARCH, SEARCH_DEF)
 
-        val editTextId = findViewById<EditText>(R.id.search)
+        editTextId = findViewById(R.id.search)
         editTextId.setText(searchText)
+
+        if(searchText.isNotEmpty()) {
+            findSong(searchText)
+        }
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
+    private fun showPage(text: String) {
+        if (text.isNotEmpty()) {
+            when(text) {
+                "not_found" -> {
+                    placeholderImage.setImageResource(R.drawable.not_found)
+                    placeholderId.text = getString(R.string.nothing_search)
+                }
+                "not_connection" -> {
+                    placeholderImage.setImageResource(R.drawable.not_connection)
+                    placeholderId.text = getString(R.string.trouble_network)
+                    updateButton.isVisible = true
+                }
+            }
+
+            placeholderId.isVisible = true
+            placeholderImage.isVisible = true
+            trackAdapter.updateItem(mutableListOf())
         } else {
-            View.VISIBLE
+            placeholderId.isVisible = false
+            placeholderImage.isVisible = false
+            updateButton.isVisible = false
         }
     }
 
