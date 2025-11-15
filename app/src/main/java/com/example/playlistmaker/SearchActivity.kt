@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import retrofit2.Call
@@ -83,23 +84,16 @@ class SearchActivity : AppCompatActivity() {
             trackAdapter.updateItem(mutableListOf())
 
             hideKeyboard()
-            placeholderId.visibility = View.GONE
-            placeholderImage.visibility = View.GONE
-            updateButton.visibility = View.GONE
+            placeholderId.isVisible = false
+            placeholderImage.isVisible = false
+            updateButton.isVisible = false
+
         }
 
-        val searchTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchText = s.toString()
-                clearButtonId.isVisible = !s.isNullOrEmpty()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
+        editTextId.doOnTextChanged { text, start, before, count ->
+            searchText = text.toString()
+            clearButtonId.isVisible = !text.isNullOrEmpty()
         }
-
-        editTextId.addTextChangedListener(searchTextWatcher)
 
         editTextId.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -190,17 +184,17 @@ class SearchActivity : AppCompatActivity() {
                 "not_connection" -> {
                     placeholderImage.setImageResource(R.drawable.not_connection)
                     placeholderId.text = getString(R.string.trouble_network)
-                    updateButton.visibility = View.VISIBLE
+                    updateButton.isVisible = true
                 }
             }
 
-            placeholderId.visibility = View.VISIBLE
-            placeholderImage.visibility = View.VISIBLE
+            placeholderId.isVisible = true
+            placeholderImage.isVisible = true
             trackAdapter.updateItem(mutableListOf())
         } else {
-            placeholderId.visibility = View.GONE
-            placeholderImage.visibility = View.GONE
-            updateButton.visibility = View.GONE
+            placeholderId.isVisible = false
+            placeholderImage.isVisible = false
+            updateButton.isVisible = false
         }
     }
 
