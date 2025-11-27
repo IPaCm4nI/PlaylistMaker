@@ -21,6 +21,10 @@ class TrackViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater
 
 
     fun bind(song: Track) {
+        trackName.text = ""
+        artistName.text = ""
+        trackTimeMillis.text = ""
+
         trackName.text = song.trackName.trim()
         artistName.text = song.artistName.trim()
         trackTimeMillis.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(song.trackTimeMillis).trim()
