@@ -38,7 +38,7 @@
         <item name="android:textFontWeight">500</item>
     </style>
 
-    <style name="ButtonUpdate" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="ButtonShow" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:letterSpacing">0</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -51,7 +51,6 @@
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:visibility">gone</item>
     </style>
 
     <style name="TextViewGlobal">

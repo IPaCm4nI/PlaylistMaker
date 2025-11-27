@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -38,16 +39,21 @@ class SearchActivity : AppCompatActivity() {
 
     private val songService = retrofit.create(SongApi::class.java)
 
-    private val trackAdapter = TrackAdapter()
+    private val FILE_HISTORY_TRACK = "file_history_track"
+
+    private lateinit var searchAdapter: TrackAdapter
+    private lateinit var historyAdapter: TrackAdapter
     private lateinit var placeholderId: TextView
     private lateinit var placeholderImage: ImageView
+    private lateinit var placeholderLayout: LinearLayout
     private lateinit var toolbarSearchId: MaterialToolbar
     private lateinit var recyclerViewSongs: RecyclerView
+    private lateinit var recyclerViewHistory: RecyclerView
     private lateinit var editTextId: EditText
     private lateinit var clearButtonId: ImageView
     private lateinit var updateButton: Button
-
-
+    private lateinit var clearHistory: Button
+    private lateinit var layoutHistory: LinearLayout
     companion object {
         const val KEY_SEARCH = "SEARCH"
         const val SEARCH_DEF = ""
@@ -63,36 +69,64 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        placeholderId = findViewById(R.id.placeholderMessage)
-        placeholderImage = findViewById(R.id.placeholderImage)
-        toolbarSearchId = findViewById(R.id.toolbar_search)
-        toolbarSearchId.setNavigationOnClickListener {
-            hideKeyboard()
+        val sharedPrefs = getSharedPreferences(FILE_HISTORY_TRACK, MODE_PRIVATE)
+        val searchHistory = SearchHistory(sharedPrefs)
 
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
+        searchAdapter = TrackAdapter {
+            searchHistory.saveTrack(it)
+        }
+
+        historyAdapter = TrackAdapter {
+            searchHistory.saveTrack(it)
         }
 
         recyclerViewSongs = findViewById(R.id.listSongs)
+        recyclerViewSongs.adapter = searchAdapter
 
-        recyclerViewSongs.adapter = trackAdapter
+        recyclerViewHistory = findViewById(R.id.listHistory)
+        recyclerViewHistory.adapter = historyAdapter
 
         editTextId = findViewById(R.id.search)
         clearButtonId = findViewById(R.id.clearIcon)
-        clearButtonId.setOnClickListener {
-            editTextId.setText("")
-            trackAdapter.updateItem(mutableListOf())
+        placeholderId = findViewById(R.id.placeholderMessage)
+        placeholderImage = findViewById(R.id.placeholderImage)
+        placeholderLayout = findViewById(R.id.placeholderLayout)
+        toolbarSearchId = findViewById(R.id.toolbar_search)
+        clearHistory = findViewById(R.id.bClearHistory)
+        updateButton = findViewById(R.id.bUpdate)
+        layoutHistory = findViewById(R.id.llHistory)
 
+        toolbarSearchId.setNavigationOnClickListener {
             hideKeyboard()
-            placeholderId.isVisible = false
-            placeholderImage.isVisible = false
-            updateButton.isVisible = false
-
+            finish()
         }
 
-        editTextId.doOnTextChanged { text, start, before, count ->
-            searchText = text.toString()
+        clearButtonId.setOnClickListener {
+            editTextId.setText("")
+            editTextId.requestFocus()
+
+            showHistory(searchHistory)
+            searchAdapter.updateItem(mutableListOf())
+
+            hideKeyboard()
+        }
+
+        editTextId.doOnTextChanged { text, _, _, _ ->
             clearButtonId.isVisible = !text.isNullOrEmpty()
+
+            if (text.isNullOrEmpty() && editTextId.hasFocus()) {
+                showHistory(searchHistory)
+            } else {
+                showResults()
+            }
+        }
+
+        editTextId.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && editTextId.text.isNullOrEmpty()) {
+                showHistory(searchHistory)
+            } else {
+                showResults()
+            }
         }
 
         editTextId.setOnEditorActionListener { _, actionId, _ ->
@@ -109,11 +143,16 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        updateButton = findViewById(R.id.bUpdate)
         updateButton.setOnClickListener {
             if (searchText.isNotEmpty()) {
                 findSong(searchText)
             }
+        }
+
+        clearHistory.setOnClickListener {
+            searchHistory.clearHistory()
+            historyAdapter.updateItem(mutableListOf())
+            layoutHistory.isVisible = false
         }
     }
 
@@ -136,7 +175,8 @@ class SearchActivity : AppCompatActivity() {
                     when(response.code()) {
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
-                                trackAdapter.updateItem(response.body()?.results!!.toMutableList())
+                                searchAdapter.updateItem(response.body()?.results!!.toMutableList())
+                                recyclerViewSongs.isVisible = true
                                 showPage("")
                             } else {
                                 showPage("not_found")
@@ -188,13 +228,10 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
 
-            placeholderId.isVisible = true
-            placeholderImage.isVisible = true
-            trackAdapter.updateItem(mutableListOf())
+            placeholderLayout.isVisible = true
+            searchAdapter.updateItem(mutableListOf())
         } else {
-            placeholderId.isVisible = false
-            placeholderImage.isVisible = false
-            updateButton.isVisible = false
+            showResults()
         }
     }
 
@@ -204,5 +241,21 @@ class SearchActivity : AppCompatActivity() {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
+    }
+
+    private fun showHistory(searchHistory: SearchHistory) {
+        val historyMovies = searchHistory.getHistory()
+        historyAdapter.updateItem(historyMovies)
+        layoutHistory.isVisible = historyMovies.isNotEmpty()
+        recyclerViewSongs.isVisible = false
+        placeholderLayout.isVisible = false
+        updateButton.isVisible = false
+    }
+
+    private fun showResults() {
+        recyclerViewSongs.isVisible = true
+        layoutHistory.isVisible = false
+        placeholderLayout.isVisible = false
+        updateButton.isVisible = false
     }
 }

@@ -4,6 +4,7 @@ import java.util.UUID
 
 data class Track(
     val id: String = UUID.randomUUID().toString(),
+    val trackId: Int,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,

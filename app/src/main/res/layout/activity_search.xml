@@ -26,38 +26,71 @@
             app:tint="?attr/colorOnSecondary" />
     </FrameLayout>
 
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listSongs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:visibility="visible"
+        tools:visibility="gone"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listSongs"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:layout_marginTop="@dimen/dp_16"/>
+    <LinearLayout
+        android:id="@+id/llHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvYouFind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="@string/youSearch"
+            android:layout_marginTop="@dimen/dp_42"
+            android:gravity="center"
+            android:textSize="@dimen/sp_19"
+            android:textColor="?attr/colorSecondary"
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500"
+            android:layout_marginBottom="@dimen/dp_20"
+            tools:text="@string/youSearch" />
 
-            <ImageView
-                android:id="@+id/placeholderImage"
-                style="@style/ImageView.Placeholder"
-                tools:src="@drawable/not_connection" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listHistory"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <TextView
-                android:id="@+id/placeholderMessage"
-                style="@style/TextViewDefault.Placeholder"
-                tools:text="Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"/>
+        <Button
+            android:id="@+id/bClearHistory"
+            android:text="@string/clear_history"
+            style="@style/ButtonShow" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/bUpdate"
-                android:text="@string/update"
-                style="@style/ButtonUpdate"/>
+    <LinearLayout
+        android:id="@+id/placeholderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="gone">
 
-        </LinearLayout>
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/placeholderImage"
+            style="@style/ImageView.Placeholder"/>
+
+        <TextView
+            android:id="@+id/placeholderMessage"
+            style="@style/TextViewDefault.Placeholder"/>
+
+        <Button
+            android:id="@+id/bUpdate"
+            android:text="@string/update"
+            style="@style/ButtonShow"/>
+
+    </LinearLayout>
 
 </LinearLayout>
