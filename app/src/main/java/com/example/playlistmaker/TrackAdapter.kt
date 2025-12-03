@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackAdapter: RecyclerView.Adapter<TrackViewHolder> () {
+class TrackAdapter(val clickListener: trackClickListener): RecyclerView.Adapter<TrackViewHolder> () {
 
     var listSongs: MutableList<Track> = mutableListOf()
 
@@ -46,9 +46,17 @@ class TrackAdapter: RecyclerView.Adapter<TrackViewHolder> () {
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(listSongs[position])
+
+        holder.itemView.setOnClickListener {
+            clickListener.onTrackClick(listSongs[position])
+        }
     }
 
     override fun getItemCount(): Int {
         return listSongs.size
+    }
+
+    fun interface trackClickListener {
+        fun onTrackClick(track: Track)
     }
 }

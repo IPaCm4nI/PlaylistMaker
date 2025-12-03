@@ -12,12 +12,11 @@
         app:titleTextAppearance="@style/MaterialToolBar.Settings.Title"
         style="@style/MaterialToolBar"/>
 
-    <Switch
-        android:layout_height="wrap_content"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwitcher"
         android:text="@string/theme"
-        android:layout_marginTop="@dimen/dp_24"
-        android:paddingBottom="@dimen/dp_21"
-        style="@style/TextViewDefault.Switch" />
+        style="@style/Switcher"
+        />
 
     <TextView
         android:id="@+id/share"

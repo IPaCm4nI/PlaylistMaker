@@ -38,7 +38,7 @@
         <item name="android:textFontWeight">500</item>
     </style>
 
-    <style name="ButtonUpdate" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="ButtonShow" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:letterSpacing">0</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -51,7 +51,6 @@
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:visibility">gone</item>
     </style>
 
     <style name="TextViewGlobal">
@@ -124,9 +123,16 @@
         <item name="android:layout_marginEnd">@dimen/dp_28</item>
     </style>
 
-    <style name="TextViewDefault.Switch" parent="TextViewDefault">
-        <item name="android:layout_gravity">start</item>
-        <item name="android:layout_marginStart">@dimen/dp_16</item>
+    <style name="Switcher" parent="TextViewGlobal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingStart">@dimen/dp_16</item>
+        <item name="android:paddingEnd">@dimen/dp_6</item>
+        <item name="android:paddingTop">@dimen/dp_21</item>
+        <item name="android:layout_marginTop">@dimen/dp_24</item>
+        <item name="android:paddingBottom">@dimen/dp_21</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
     </style>
 
     <style name="TextViewDefault.Text" parent="TextViewDefault">
