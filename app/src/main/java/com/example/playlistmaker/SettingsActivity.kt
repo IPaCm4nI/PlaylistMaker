@@ -12,6 +12,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.core.net.toUri
+import com.example.playlistmaker.App.Companion.PREFERENCES_FILE
+import com.example.playlistmaker.App.Companion.THEME_KEY
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
