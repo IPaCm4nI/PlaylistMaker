@@ -162,6 +162,8 @@
         <TextView
             android:id="@+id/album"
             style="@style/TextViewInfo.Player"
+            android:layout_width="@dimen/dp_0"
+            android:gravity="end"
             android:layout_marginTop="@dimen/dp_17"
             app:layout_constraintStart_toEndOf="@id/nameAlbum"
             app:layout_constraintEnd_toStartOf="@id/rightLine16"
@@ -180,7 +182,6 @@
         <TextView
             android:id="@+id/nameYear"
             style="@style/TextViewInfo.Player"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/dp_17"
             app:layout_constraintStart_toStartOf="@id/leftLine16"
             app:layout_constraintEnd_toStartOf="@id/year"
@@ -191,7 +192,8 @@
         <TextView
             android:id="@+id/year"
             style="@style/TextViewInfo.Player"
-            android:visibility="gone"
+            android:layout_width="@dimen/dp_0"
+            android:gravity="end"
             android:layout_marginTop="@dimen/dp_17"
             app:layout_constraintStart_toEndOf="@id/nameYear"
             app:layout_constraintEnd_toStartOf="@id/rightLine16"
@@ -220,6 +222,8 @@
         <TextView
             android:id="@+id/genre"
             style="@style/TextViewInfo.Player"
+            android:layout_width="@dimen/dp_0"
+            android:gravity="end"
             android:layout_marginTop="@dimen/dp_17"
             app:layout_constraintStart_toEndOf="@id/nameGenre"
             app:layout_constraintEnd_toStartOf="@id/rightLine16"
@@ -248,6 +252,8 @@
         <TextView
             android:id="@+id/country"
             style="@style/TextViewInfo.Player"
+            android:layout_width="@dimen/dp_0"
+            android:gravity="end"
             android:layout_marginTop="@dimen/dp_17"
             app:layout_constraintStart_toEndOf="@id/nameCountry"
             app:layout_constraintEnd_toStartOf="@id/rightLine16"
