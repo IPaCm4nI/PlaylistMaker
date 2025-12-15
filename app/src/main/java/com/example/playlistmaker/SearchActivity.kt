@@ -23,6 +23,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,6 +58,8 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val KEY_SEARCH = "SEARCH"
         const val SEARCH_DEF = ""
+
+        const val KEY_TRACK = "TRACK"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,10 +77,14 @@ class SearchActivity : AppCompatActivity() {
 
         searchAdapter = TrackAdapter {
             searchHistory.saveTrack(it)
+
+            moveToPlayer(it)
         }
 
         historyAdapter = TrackAdapter {
             searchHistory.saveTrack(it)
+
+            moveToPlayer(it)
         }
 
         recyclerViewSongs = findViewById(R.id.listSongs)
@@ -210,6 +217,7 @@ class SearchActivity : AppCompatActivity() {
         editTextId.setText(searchText)
 
         if(searchText.isNotEmpty()) {
+            editTextId.setSelection(searchText.length)
             findSong(searchText)
         }
     }
@@ -257,5 +265,11 @@ class SearchActivity : AppCompatActivity() {
         layoutHistory.isVisible = false
         placeholderLayout.isVisible = false
         updateButton.isVisible = false
+    }
+
+    private fun moveToPlayer(track: Track) {
+        val intentPlayer = Intent(this, PlayerActivity::class.java)
+        intentPlayer.putExtra(KEY_TRACK, Gson().toJson(track))
+        startActivity(intentPlayer)
     }
 }
