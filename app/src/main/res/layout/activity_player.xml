@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageButton
+            android:id="@+id/backArrow"
+            style="@style/LayoutWrap"
+            app:srcCompat="@drawable/back"
+            android:background="?attr/colorPrimary"
+            android:layout_marginStart="@dimen/dp_4"
+            android:layout_marginTop="@dimen/dp_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftLine"
+            style="@style/GuideLinePlayer"
+            app:layout_constraintGuide_begin="@dimen/dp_24"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightLine"
+            style="@style/GuideLinePlayer"
+            app:layout_constraintGuide_end="@dimen/dp_24"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/ivAlbum"
+            style="@style/Layout0dpWrap"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="@dimen/dp_30"
+            app:layout_constraintStart_toStartOf="@id/leftLine"
+            app:layout_constraintEnd_toEndOf="@id/rightLine"
+            app:layout_constraintTop_toBottomOf="@id/backArrow"
+            tools:srcCompat="@drawable/placeholder512" />
+
+        <TextView
+            android:id="@+id/tvNameSong"
+            style="@style/TextViewOneLine"
+            android:layout_marginTop="@dimen/dp_24"
+            android:textSize="@dimen/sp_22"
+            app:layout_constraintTop_toBottomOf="@id/ivAlbum"
+            app:layout_constraintEnd_toEndOf="@id/rightLine"
+            app:layout_constraintStart_toStartOf="@id/leftLine"
+            tools:text="Yesterday (Remastered 2009)" />
+
+        <TextView
+            android:id="@+id/tvNameGroup"
+            style="@style/TextViewOneLine"
+            android:layout_marginTop="@dimen/dp_12"
+            android:textSize="@dimen/sp_14"
+            app:layout_constraintTop_toBottomOf="@id/tvNameSong"
+            app:layout_constraintEnd_toEndOf="@id/rightLine"
+            app:layout_constraintStart_toStartOf="@id/leftLine"
+            tools:text="The Beatles" />
+
+        <ImageButton
+            android:id="@+id/addButton"
+            style="@style/ImageButtonGreyRound"
+            app:srcCompat="@drawable/added_button"
+            app:layout_constraintEnd_toStartOf="@id/playButton"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="@id/leftLine"
+            app:layout_constraintTop_toBottomOf="@id/tvNameGroup"  />
+
+        <ImageView
+            android:id="@+id/playButton"
+            style="@style/LayoutWrap"
+            android:layout_marginTop="@dimen/dp_39"
+            app:srcCompat="@drawable/selector_play"
+            app:layout_constraintTop_toBottomOf="@id/tvNameGroup"
+            app:layout_constraintStart_toEndOf="@id/addButton"
+            app:layout_constraintEnd_toStartOf="@id/favoriteButton"
+            app:layout_constraintHorizontal_chainStyle="spread"/>
+
+        <ImageButton
+            android:id="@+id/favoriteButton"
+            style="@style/ImageButtonGreyRound"
+            app:srcCompat="@drawable/selecter_favorite"
+            app:layout_constraintEnd_toStartOf="@id/rightLine"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toEndOf="@id/playButton"
+            app:layout_constraintTop_toBottomOf="@id/tvNameGroup" />
+
+        <TextView
+            android:id="@+id/currentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/playButton"
+            app:layout_constraintEnd_toEndOf="@id/playButton"
+            app:layout_constraintTop_toBottomOf="@id/playButton"
+            android:layout_marginTop="@dimen/dp_13"
+            android:fontFamily="@font/ys_display_medium"
+            android:textSize="@dimen/sp_14"
+            android:textFontWeight="500"
+            android:textColor="?attr/colorOnPrimary"
+            android:text="@string/test_time" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftLine16"
+            style="@style/GuideLinePlayer"
+            app:layout_constraintGuide_begin="@dimen/dp_16" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightLine16"
+            style="@style/GuideLinePlayer"
+            app:layout_constraintGuide_end="@dimen/dp_16" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="nameTime, time"/>
+
+        <TextView
+            android:id="@+id/nameTime"
+            style="@style/TextViewInfo.Player"
+            app:layout_constraintStart_toStartOf="@id/leftLine16"
+            app:layout_constraintEnd_toStartOf="@id/time"
+            app:layout_constraintTop_toBottomOf="@id/currentTime"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:text="@string/time"/>
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/TextViewInfo.Player"
+            app:layout_constraintStart_toEndOf="@id/nameTime"
+            app:layout_constraintEnd_toStartOf="@id/rightLine16"
+            app:layout_constraintTop_toBottomOf="@id/currentTime"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="00:00"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="nameAlbum, album"/>
+
+        <TextView
+            android:id="@+id/nameAlbum"
+            style="@style/TextViewInfo.Player"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toStartOf="@id/leftLine16"
+            app:layout_constraintEnd_toStartOf="@id/album"
+            app:layout_constraintTop_toBottomOf="@id/nameTime"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:text="@string/album"/>
+
+        <TextView
+            android:id="@+id/album"
+            style="@style/TextViewInfo.Player"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toEndOf="@id/nameAlbum"
+            app:layout_constraintEnd_toStartOf="@id/rightLine16"
+            app:layout_constraintTop_toBottomOf="@id/time"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="Yesterday" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="nameYear, year"/>
+
+        <TextView
+            android:id="@+id/nameYear"
+            style="@style/TextViewInfo.Player"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toStartOf="@id/leftLine16"
+            app:layout_constraintEnd_toStartOf="@id/year"
+            app:layout_constraintTop_toBottomOf="@id/nameAlbum"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:text="@string/year"/>
+
+        <TextView
+            android:id="@+id/year"
+            style="@style/TextViewInfo.Player"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toEndOf="@id/nameYear"
+            app:layout_constraintEnd_toStartOf="@id/rightLine16"
+            app:layout_constraintTop_toBottomOf="@id/album"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="1995"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupGenre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="nameGenre, genre"/>
+
+        <TextView
+            android:id="@+id/nameGenre"
+            style="@style/TextViewInfo.Player"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toStartOf="@id/leftLine16"
+            app:layout_constraintEnd_toStartOf="@id/genre"
+            app:layout_constraintTop_toBottomOf="@id/nameYear"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:text="@string/genre"/>
+
+        <TextView
+            android:id="@+id/genre"
+            style="@style/TextViewInfo.Player"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toEndOf="@id/nameGenre"
+            app:layout_constraintEnd_toStartOf="@id/rightLine16"
+            app:layout_constraintTop_toBottomOf="@id/year"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="Rock"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="nameCountry, country"/>
+
+        <TextView
+            android:id="@+id/nameCountry"
+            style="@style/TextViewInfo.Player"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toStartOf="@id/leftLine16"
+            app:layout_constraintEnd_toStartOf="@id/country"
+            app:layout_constraintTop_toBottomOf="@id/nameGenre"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:text="@string/country"/>
+
+        <TextView
+            android:id="@+id/country"
+            style="@style/TextViewInfo.Player"
+            android:layout_marginTop="@dimen/dp_17"
+            app:layout_constraintStart_toEndOf="@id/nameCountry"
+            app:layout_constraintEnd_toStartOf="@id/rightLine16"
+            app:layout_constraintTop_toBottomOf="@id/genre"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="RU"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

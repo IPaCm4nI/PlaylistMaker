@@ -213,4 +213,36 @@
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
+
+    <style name="GuideLinePlayer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="TextViewInfo.Player" parent="LayoutWrap">
+        <item name="android:layout_marginTop">@dimen/dp_39</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/sp_13</item>
+        <item name="android:textColor">@color/grey_hint</item>
+    </style>
+
+    <style name="Layout0dpWrap">
+        <item name="android:layout_width">@dimen/dp_0</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="TextViewOneLine" parent="Layout0dpWrap">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="ImageButtonGreyRound" parent="LayoutWrap">
+        <item name="android:layout_marginTop">@dimen/dp_54</item>
+        <item name="android:background">@drawable/grey_round_button</item>
+    </style>
 </resources>
