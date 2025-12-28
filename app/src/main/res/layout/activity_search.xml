@@ -25,6 +25,16 @@
             style="@style/ImageView.Search"
             app:tint="?attr/colorOnSecondary" />
     </FrameLayout>
+    
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/dp_44"
+        android:layout_height="@dimen/dp_44"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_140"
+        android:indeterminateTint="@color/progress_bar"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listSongs"
@@ -41,7 +51,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <TextView
             android:id="@+id/tvYouFind"

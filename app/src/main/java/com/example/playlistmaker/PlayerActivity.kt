@@ -1,7 +1,9 @@
 package com.example.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -16,9 +18,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.SearchActivity.Companion.KEY_TRACK
 import com.google.gson.Gson
+import java.lang.Runnable
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.collections.isNotEmpty
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var backArrow: ImageButton
@@ -36,6 +38,32 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var genre: TextView
     private lateinit var groupCountry: Group
     private lateinit var country: TextView
+    private lateinit var currentTime: TextView
+    private var mediaPlayer = MediaPlayer()
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 500L
+    }
+
+    private var playerState = STATE_DEFAULT
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val currentTimeRunnable = object: Runnable {
+        override fun run() {
+            if (playerState != STATE_PLAYING) return
+
+            currentTime.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(mediaPlayer.currentPosition)
+
+            handler.postDelayed(this, DELAY)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +80,7 @@ class PlayerActivity : AppCompatActivity() {
         nameSong = findViewById(R.id.tvNameSong)
         favoriteButton = findViewById(R.id.favoriteButton)
         playButton = findViewById(R.id.playButton)
+        currentTime = findViewById(R.id.currentTime)
         nameGroup = findViewById(R.id.tvNameGroup)
         time = findViewById(R.id.time)
         groupAlbum = findViewById(R.id.groupAlbum)
@@ -72,10 +101,13 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         playButton.setOnClickListener {
-            playButton.isSelected = !playButton.isSelected
+            playbackControl()
+            handler.post(currentTimeRunnable)
         }
 
         val track = Gson().fromJson(intent.getStringExtra(KEY_TRACK), Track::class.java)
+
+        preparePlayer(track.previewUrl)
 
         Glide
             .with(this)
@@ -122,6 +154,57 @@ class PlayerActivity : AppCompatActivity() {
             country.text = track.country
         } else {
             groupCountry.isVisible = false
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(currentTimeRunnable)
+        mediaPlayer.release()
+    }
+
+    private fun preparePlayer(previewUrl: String) {
+        mediaPlayer.setDataSource(previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playButton.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            playButton.isSelected = !playButton.isSelected
+            playerState = STATE_PREPARED
+            handler.removeCallbacks(currentTimeRunnable)
+            currentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0).trim()
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playButton.isSelected = !playButton.isSelected
+        playerState = STATE_PLAYING
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playButton.isSelected = !playButton.isSelected
+        playerState = STATE_PAUSED
+        handler.removeCallbacks(currentTimeRunnable)
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
         }
     }
 }
