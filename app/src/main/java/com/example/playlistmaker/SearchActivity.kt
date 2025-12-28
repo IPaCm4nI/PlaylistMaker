@@ -152,20 +152,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-//        editTextId.setOnEditorActionListener { _, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                val query = normalizeString(editTextId.text.toString())
-//                searchText = query
-//
-//                if (query.isNotEmpty()) {
-//                    findSong(query)
-//                }
-//                true
-//            } else {
-//                false
-//            }
-//        }
-
         updateButton.setOnClickListener {
             if (searchText.isNotEmpty()) {
                 findSong(searchText)

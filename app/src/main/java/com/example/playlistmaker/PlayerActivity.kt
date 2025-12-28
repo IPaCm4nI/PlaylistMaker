@@ -51,6 +51,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private var playerState = STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
+    private val dateFormatStart = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0).trim()
 
     private val currentTimeRunnable = object: Runnable {
         override fun run() {
@@ -179,7 +180,7 @@ class PlayerActivity : AppCompatActivity() {
             playButton.isSelected = !playButton.isSelected
             playerState = STATE_PREPARED
             handler.removeCallbacks(currentTimeRunnable)
-            currentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0).trim()
+            currentTime.text = dateFormatStart
         }
     }
 
