@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.media.Image
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +27,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import okhttp3.internal.http2.Http2Reader
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,12 +59,20 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
     private lateinit var clearHistory: Button
     private lateinit var layoutHistory: LinearLayout
+    private lateinit var progressBar: ProgressBar
     companion object {
         const val KEY_SEARCH = "SEARCH"
         const val SEARCH_DEF = ""
 
         const val KEY_TRACK = "TRACK"
+
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchRequest() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,6 +114,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistory = findViewById(R.id.bClearHistory)
         updateButton = findViewById(R.id.bUpdate)
         layoutHistory = findViewById(R.id.llHistory)
+        progressBar = findViewById(R.id.progressBar)
 
         toolbarSearchId.setNavigationOnClickListener {
             hideKeyboard()
@@ -111,6 +124,8 @@ class SearchActivity : AppCompatActivity() {
         clearButtonId.setOnClickListener {
             editTextId.setText("")
             editTextId.requestFocus()
+
+            progressBar.isVisible = false
 
             showHistory(searchHistory)
             searchAdapter.updateItem(mutableListOf())
@@ -124,6 +139,7 @@ class SearchActivity : AppCompatActivity() {
             if (text.isNullOrEmpty() && editTextId.hasFocus()) {
                 showHistory(searchHistory)
             } else {
+                searchDebounce()
                 showResults()
             }
         }
@@ -133,20 +149,6 @@ class SearchActivity : AppCompatActivity() {
                 showHistory(searchHistory)
             } else {
                 showResults()
-            }
-        }
-
-        editTextId.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val query = normalizeString(editTextId.text.toString())
-                searchText = query
-
-                if (query.isNotEmpty()) {
-                    findSong(query)
-                }
-                true
-            } else {
-                false
             }
         }
 
@@ -173,12 +175,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun findSong(query: String) {
+        progressBar.isVisible = true
+        placeholderLayout.isVisible = false
+
         songService.getSongs(query)
             .enqueue(object: Callback<SongResponse> {
                 override fun onResponse(
                     call: Call<SongResponse?>,
                     response: Response<SongResponse?>
                 ) {
+                    progressBar.isVisible = false
+
                     when(response.code()) {
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
@@ -199,6 +206,8 @@ class SearchActivity : AppCompatActivity() {
                     call: Call<SongResponse?>,
                     t: Throwable
                 ) {
+                    progressBar.isVisible = false
+
                     showPage("not_connection")
                 }
             })
@@ -268,8 +277,32 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun moveToPlayer(track: Track) {
-        val intentPlayer = Intent(this, PlayerActivity::class.java)
-        intentPlayer.putExtra(KEY_TRACK, Gson().toJson(track))
-        startActivity(intentPlayer)
+        if (clickDebounce()) {
+            val intentPlayer = Intent(this, PlayerActivity::class.java)
+            intentPlayer.putExtra(KEY_TRACK, Gson().toJson(track))
+            startActivity(intentPlayer)
+        }
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun searchRequest() {
+        val query = normalizeString(editTextId.text.toString())
+        searchText = query
+        if (query.isNotEmpty()) {
+            findSong(query)
+        }
     }
 }

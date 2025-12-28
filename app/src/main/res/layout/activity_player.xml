@@ -80,6 +80,7 @@
             app:srcCompat="@drawable/selector_play"
             app:layout_constraintTop_toBottomOf="@id/tvNameGroup"
             app:layout_constraintStart_toEndOf="@id/addButton"
+            android:enabled ="false"
             app:layout_constraintEnd_toStartOf="@id/favoriteButton"
             app:layout_constraintHorizontal_chainStyle="spread"/>
 

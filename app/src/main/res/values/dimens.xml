@@ -29,4 +29,6 @@
     <dimen name="dp_39">39dp</dimen>
     <dimen name="sp_13">13sp</dimen>
     <dimen name="dp_17">17dp</dimen>
+    <dimen name="dp_44">44dp</dimen>
+    <dimen name="dp_140">140dp</dimen>
 </resources>
