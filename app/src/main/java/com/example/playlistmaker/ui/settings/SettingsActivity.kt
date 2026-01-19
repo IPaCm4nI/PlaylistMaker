@@ -10,7 +10,6 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.App
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.api.ThemeInteractor
 import com.google.android.material.appbar.MaterialToolbar
@@ -35,7 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        themeInteractor = Creator.provideThemeInteractor(application)
+        themeInteractor = (application as App).themeInteractor
 
         themeSwitcher = findViewById(R.id.themeSwitcher)
         toolbarSettingsId = findViewById(R.id.toolbar_settings)
@@ -44,9 +43,8 @@ class SettingsActivity : AppCompatActivity() {
         contractButton = findViewById(R.id.contract)
 
         themeSwitcher.isChecked = themeInteractor.getTheme()
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
             themeInteractor.setTheme(checked)
-            (applicationContext as App).switchTheme(checked)
         }
 
         toolbarSettingsId.setNavigationOnClickListener {

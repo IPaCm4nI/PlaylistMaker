@@ -79,7 +79,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         songsInteractor = Creator.provideSongsInteractor()
-        historyInteractor = Creator.provideHistoryInteractor(application)
+        historyInteractor = Creator.provideHistoryInteractor()
 
         searchAdapter = TrackAdapter {
             historyInteractor.saveTrack(it)
