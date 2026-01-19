@@ -1,19 +1,19 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.settings
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.children
+import com.example.playlistmaker.App
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.ThemeInteractor
 import com.google.android.material.appbar.MaterialToolbar
-import androidx.core.net.toUri
-import com.example.playlistmaker.App.Companion.PREFERENCES_FILE
-import com.example.playlistmaker.App.Companion.THEME_KEY
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -22,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var shareButton: TextView
     private lateinit var supportButton: TextView
     private lateinit var contractButton: TextView
+    private lateinit var themeInteractor: ThemeInteractor
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,16 +35,17 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
+        themeInteractor = Creator.provideThemeInteractor(application)
+
         themeSwitcher = findViewById(R.id.themeSwitcher)
         toolbarSettingsId = findViewById(R.id.toolbar_settings)
         shareButton = findViewById(R.id.share)
         supportButton = findViewById(R.id.support)
         contractButton = findViewById(R.id.contract)
 
-        val sharedRefs = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
-
-        themeSwitcher.isChecked = sharedRefs.getBoolean(THEME_KEY, false)
+        themeSwitcher.isChecked = themeInteractor.getTheme()
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            themeInteractor.setTheme(checked)
             (applicationContext as App).switchTheme(checked)
         }
 
@@ -71,6 +73,5 @@ class SettingsActivity : AppCompatActivity() {
             val intentSupport = Intent(Intent.ACTION_VIEW, getString(R.string.link_offer).toUri())
             startActivity(intentSupport)
         }
-
     }
 }

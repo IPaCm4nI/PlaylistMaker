@@ -1,18 +1,21 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.song, parent, false)) {
+class TrackViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(
+    LayoutInflater.from(parent.context).inflate(
+        R.layout.song, parent, false)) {
     private val trackName: TextView = itemView.findViewById(R.id.trackName)
     private val artistName: TextView = itemView.findViewById(R.id.artistName)
     private val trackTimeMillis: TextView = itemView.findViewById(R.id.trackTimeMillis)
@@ -27,7 +30,9 @@ class TrackViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater
 
         trackName.text = song.trackName.trim()
         artistName.text = song.artistName.trim()
-        trackTimeMillis.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(song.trackTimeMillis).trim()
+        trackTimeMillis.text = song.trackTimeMillis.trim()
+//        trackTimeMillis.text = SimpleDateFormat("mm:ss", Locale.getDefault())
+//            .format(song.trackTimeMillis).trim()
 
         Glide.with(itemView.context)
             .load(song.artworkUrl100)
