@@ -9,4 +9,6 @@
     <color name="grey_hint">#AEAFB4</color>
     <color name="red">#F56B6C</color>
     <color name="progress_bar">#3772E7</color>
+    <color name="thumbSwitch">#3772E7</color>
+    <color name="trackTint">#9FBBF3</color>
 </resources>

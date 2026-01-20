@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.player
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -16,9 +16,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.SearchActivity.Companion.KEY_TRACK
+import com.example.playlistmaker.R
+import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
-import java.lang.Runnable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -106,7 +107,7 @@ class PlayerActivity : AppCompatActivity() {
             handler.post(currentTimeRunnable)
         }
 
-        val track = Gson().fromJson(intent.getStringExtra(KEY_TRACK), Track::class.java)
+        val track = Gson().fromJson(intent.getStringExtra(SearchActivity.Companion.KEY_TRACK), Track::class.java)
 
         preparePlayer(track.previewUrl)
 
@@ -127,7 +128,7 @@ class PlayerActivity : AppCompatActivity() {
 
         nameSong.text = track.trackName
         nameGroup.text = track.artistName
-        time.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis).trim()
+        time.text = track.trackTimeMillis.trim()
 
         if (track.collectionName?.isNotEmpty() == true) {
             groupAlbum.isVisible = true

@@ -1,16 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
-import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -25,9 +18,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.dto.SongResponse
+import com.example.playlistmaker.data.network.SongApi
+import com.example.playlistmaker.domain.api.HistoryInteractor
+import com.example.playlistmaker.domain.api.SongInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.player.PlayerActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
-import okhttp3.internal.http2.Http2Reader
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,16 +36,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private var searchText: String = SEARCH_DEF
-    private val baseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val songService = retrofit.create(SongApi::class.java)
-
-    private val FILE_HISTORY_TRACK = "file_history_track"
-
     private lateinit var searchAdapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
     private lateinit var placeholderId: TextView
@@ -68,11 +58,15 @@ class SearchActivity : AppCompatActivity() {
 
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+
+        val FILE_HISTORY_TRACK = "file_history_track"
     }
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { searchRequest() }
+    private lateinit var songsInteractor: SongInteractor
+    private lateinit var historyInteractor: HistoryInteractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,17 +78,17 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        val sharedPrefs = getSharedPreferences(FILE_HISTORY_TRACK, MODE_PRIVATE)
-        val searchHistory = SearchHistory(sharedPrefs)
+        songsInteractor = Creator.provideSongsInteractor()
+        historyInteractor = Creator.provideHistoryInteractor()
 
         searchAdapter = TrackAdapter {
-            searchHistory.saveTrack(it)
+            historyInteractor.saveTrack(it)
 
             moveToPlayer(it)
         }
 
         historyAdapter = TrackAdapter {
-            searchHistory.saveTrack(it)
+            historyInteractor.saveTrack(it)
 
             moveToPlayer(it)
         }
@@ -127,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
 
             progressBar.isVisible = false
 
-            showHistory(searchHistory)
+            showHistory()
             searchAdapter.updateItem(mutableListOf())
 
             hideKeyboard()
@@ -137,7 +131,7 @@ class SearchActivity : AppCompatActivity() {
             clearButtonId.isVisible = !text.isNullOrEmpty()
 
             if (text.isNullOrEmpty() && editTextId.hasFocus()) {
-                showHistory(searchHistory)
+                showHistory()
             } else {
                 searchDebounce()
                 showResults()
@@ -146,7 +140,7 @@ class SearchActivity : AppCompatActivity() {
 
         editTextId.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && editTextId.text.isNullOrEmpty()) {
-                showHistory(searchHistory)
+                showHistory()
             } else {
                 showResults()
             }
@@ -154,12 +148,12 @@ class SearchActivity : AppCompatActivity() {
 
         updateButton.setOnClickListener {
             if (searchText.isNotEmpty()) {
-                findSong(searchText)
+                searchRequest()
             }
         }
 
         clearHistory.setOnClickListener {
-            searchHistory.clearHistory()
+            historyInteractor.clearHistory()
             historyAdapter.updateItem(mutableListOf())
             layoutHistory.isVisible = false
         }
@@ -172,45 +166,6 @@ class SearchActivity : AppCompatActivity() {
             .replace(Regex("[^a-zA-Zа-яА-Я0-9\\s'\".,&-]"), "")
             .replace(Regex("\\s+"), " ")
             .trim()
-    }
-
-    private fun findSong(query: String) {
-        progressBar.isVisible = true
-        placeholderLayout.isVisible = false
-
-        songService.getSongs(query)
-            .enqueue(object: Callback<SongResponse> {
-                override fun onResponse(
-                    call: Call<SongResponse?>,
-                    response: Response<SongResponse?>
-                ) {
-                    progressBar.isVisible = false
-
-                    when(response.code()) {
-                        200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                searchAdapter.updateItem(response.body()?.results!!.toMutableList())
-                                recyclerViewSongs.isVisible = true
-                                showPage("")
-                            } else {
-                                showPage("not_found")
-                            }
-                        }
-                        else -> {
-                            showPage("not_connection")
-                        }
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<SongResponse?>,
-                    t: Throwable
-                ) {
-                    progressBar.isVisible = false
-
-                    showPage("not_connection")
-                }
-            })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -227,7 +182,7 @@ class SearchActivity : AppCompatActivity() {
 
         if(searchText.isNotEmpty()) {
             editTextId.setSelection(searchText.length)
-            findSong(searchText)
+            searchRequest()
         }
     }
 
@@ -255,13 +210,13 @@ class SearchActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val view = currentFocus
         if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
-    private fun showHistory(searchHistory: SearchHistory) {
-        val historyMovies = searchHistory.getHistory()
+    private fun showHistory() {
+        val historyMovies = historyInteractor.getHistory()
         historyAdapter.updateItem(historyMovies)
         layoutHistory.isVisible = historyMovies.isNotEmpty()
         recyclerViewSongs.isVisible = false
@@ -301,8 +256,25 @@ class SearchActivity : AppCompatActivity() {
     private fun searchRequest() {
         val query = normalizeString(editTextId.text.toString())
         searchText = query
-        if (query.isNotEmpty()) {
-            findSong(query)
-        }
+
+        if (query.isEmpty()) return
+
+        progressBar.isVisible = true
+        placeholderLayout.isVisible = false
+
+        songsInteractor.findSongs(query, object : SongInteractor.SongsConsumer {
+            override fun consume(foundSongs: List<Track>) {
+                runOnUiThread {
+                    progressBar.isVisible = false
+
+                    if (foundSongs.isNotEmpty()) {
+                        searchAdapter.updateItem(foundSongs.toMutableList())
+                        showResults()
+                    } else {
+                        showPage("not_found")
+                    }
+                }
+            }
+        })
     }
 }
