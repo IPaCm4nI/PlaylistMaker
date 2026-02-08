@@ -17,7 +17,10 @@ import com.example.playlistmaker.domain.api.ThemeRepository
 import com.example.playlistmaker.search.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.search.domain.impl.SongInteractorImpl
 import com.example.playlistmaker.domain.impl.ThemeInteractorImpl
+import com.example.playlistmaker.search.data.storage.PrefsStorageClient
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.activity.SearchActivity
+import com.google.gson.reflect.TypeToken
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -39,17 +42,16 @@ object Creator {
         return SongInteractorImpl(getSongsRepository(context))
     }
 
-    private fun getHistoryRepository(): HistoryRepository {
-        return HistoryRepositoryImpl(
-            application.getSharedPreferences(
-                SearchActivity.Companion.FILE_HISTORY_TRACK,
-                Context.MODE_PRIVATE
-            )
-        )
+    private fun getHistoryRepository(context: Context):  HistoryRepository {
+        return HistoryRepositoryImpl(PrefsStorageClient(
+            context,
+            "KEY_HISTORY_TRACK",
+            object: TypeToken<ArrayList<Track>>() {}.type
+        ))
     }
 
-    fun provideHistoryInteractor(): HistoryInteractor {
-        return HistoryInteractorImpl(getHistoryRepository())
+    fun provideHistoryInteractor(context: Context): HistoryInteractor {
+        return HistoryInteractorImpl(getHistoryRepository(context))
     }
 
     private fun getThemeRepository(): ThemeRepository {

@@ -6,7 +6,8 @@ sealed interface SongsState{
     object Loading: SongsState
 
     data class Content(
-        val songs: List<Track>
+        val songs: List<Track>,
+        val isHistory: Boolean = false
     ) : SongsState
 
     data class Error(

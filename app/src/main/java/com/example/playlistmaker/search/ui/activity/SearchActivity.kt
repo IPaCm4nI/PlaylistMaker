@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
+import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -18,21 +18,18 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.search.domain.api.HistoryInteractor
-import com.example.playlistmaker.search.domain.api.SongInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.models.SongsState
+import com.example.playlistmaker.search.ui.view_model.SongsViewModel
 import com.example.playlistmaker.ui.player.PlayerActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
     private var searchText: String = SEARCH_DEF
-    private lateinit var searchAdapter: TrackAdapter
-    private lateinit var historyAdapter: TrackAdapter
     private lateinit var placeholderId: TextView
     private lateinit var placeholderImage: ImageView
     private lateinit var placeholderLayout: LinearLayout
@@ -48,20 +45,24 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val KEY_SEARCH = "SEARCH"
         const val SEARCH_DEF = ""
-
         const val KEY_TRACK = "TRACK"
-
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-
-        val FILE_HISTORY_TRACK = "file_history_track"
     }
 
-    private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private lateinit var songsInteractor: SongInteractor
-    private lateinit var historyInteractor: HistoryInteractor
+    private var textWatcher: TextWatcher? = null
+    private var isClickAllowed = true
+    private var viewModel: SongsViewModel? = null
+    private var searchAdapter = TrackAdapter {
+        viewModel?.saveToHistory(it)
+
+        moveToPlayer(it)
+    }
+    private var historyAdapter = TrackAdapter {
+        viewModel?.saveToHistory(it)
+
+        moveToPlayer(it)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,26 +74,18 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        songsInteractor = Creator.provideSongsInteractor(this)
-        historyInteractor = Creator.provideHistoryInteractor()
-
-        searchAdapter = TrackAdapter {
-            historyInteractor.saveTrack(it)
-
-            moveToPlayer(it)
-        }
-
-        historyAdapter = TrackAdapter {
-            historyInteractor.saveTrack(it)
-
-            moveToPlayer(it)
-        }
-
         recyclerViewSongs = findViewById(R.id.listSongs)
         recyclerViewSongs.adapter = searchAdapter
 
         recyclerViewHistory = findViewById(R.id.listHistory)
         recyclerViewHistory.adapter = historyAdapter
+
+        viewModel = ViewModelProvider(this, SongsViewModel.getFactory())
+            .get(SongsViewModel::class.java)
+
+        viewModel?.observeState()?.observe(this) {
+            render(it)
+        }
 
         editTextId = findViewById(R.id.search)
         clearButtonId = findViewById(R.id.clearIcon)
@@ -110,22 +103,15 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        clearButtonId.setOnClickListener {
-            editTextId.setText("")
-            editTextId.requestFocus()
+        textWatcher = editTextId.doOnTextChanged { text, _, _, _ ->
+            searchText = text?.toString() ?: ""
 
-            showHistory()
-
-            hideKeyboard()
-        }
-
-        editTextId.doOnTextChanged { text, _, _, _ ->
             clearButtonId.isVisible = !text.isNullOrEmpty()
 
             if (text.isNullOrEmpty() && editTextId.hasFocus()) {
                 showHistory()
             } else {
-                searchDebounce(text?.toString() ?: "")
+                viewModel?.searchDebounce(text?.toString() ?: "")
                 showRecyclerSongs()
             }
         }
@@ -139,26 +125,25 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        clearButtonId.setOnClickListener {
+            editTextId.setText("")
+            editTextId.requestFocus()
+
+            showHistory()
+
+            hideKeyboard()
+        }
+
         updateButton.setOnClickListener {
             if (searchText.isNotEmpty()) {
-                searchRequest(searchText)
+                viewModel?.searchNow(searchText)
             }
         }
 
         clearHistory.setOnClickListener {
-            historyInteractor.clearHistory()
-            historyAdapter.updateItem(mutableListOf())
+            viewModel?.clearHistory()
             layoutHistory.isVisible = false
         }
-    }
-
-    private fun normalizeString(query: String?): String {
-        if (query == null) return ""
-
-        return query
-            .replace(Regex("[^a-zA-Zа-яА-Я0-9\\s'\".,&-]"), "")
-            .replace(Regex("\\s+"), " ")
-            .trim()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -175,8 +160,13 @@ class SearchActivity : AppCompatActivity() {
 
         if(searchText.isNotEmpty()) {
             editTextId.setSelection(searchText.length)
-            searchRequest(searchText)
+            viewModel?.searchDebounce(searchText)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        textWatcher?.let { editTextId.removeTextChangedListener(it) }
     }
 
     private fun hideKeyboard() {
@@ -203,20 +193,11 @@ class SearchActivity : AppCompatActivity() {
         placeholderLayout.isVisible = true
         recyclerViewSongs.isVisible = false
         progressBar.isVisible = false
-        recyclerViewHistory.isVisible = false
+        layoutHistory.isVisible = false
     }
 
     private fun showHistory() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        progressBar.isVisible = false
-        searchAdapter.updateItem(mutableListOf())
-        recyclerViewSongs.isVisible = false
-        placeholderLayout.isVisible = false
-        updateButton.isVisible = false
-
-        val historyMovies = historyInteractor.getHistory()
-        historyAdapter.updateItem(historyMovies)
-        layoutHistory.isVisible = historyMovies.isNotEmpty()
+        viewModel?.getHistory()
     }
 
     private fun showResults(songs: List<Track>) {
@@ -243,6 +224,16 @@ class SearchActivity : AppCompatActivity() {
         progressBar.isVisible = true
     }
 
+    private fun showHistory(tracks: List<Track>) {
+        historyAdapter.updateItem(tracks.toMutableList())
+        layoutHistory.isVisible = tracks.isNotEmpty()
+
+        recyclerViewSongs.isVisible = false
+        placeholderLayout.isVisible = false
+        progressBar.isVisible = false
+        updateButton.isVisible = false
+    }
+
     private fun moveToPlayer(track: Track) {
         if (clickDebounce()) {
             val intentPlayer = Intent(this, PlayerActivity::class.java)
@@ -256,7 +247,13 @@ class SearchActivity : AppCompatActivity() {
             is SongsState.Loading -> showLoading()
             is SongsState.Error -> showPage(state.errorMessage)
             is SongsState.Empty -> showPage(state.message)
-            is SongsState.Content -> showResults(state.songs)
+            is SongsState.Content -> {
+                if (state.isHistory) {
+                    showHistory(state.songs)
+                } else {
+                    showResults(state.songs)
+                }
+            }
         }
     }
 
@@ -267,69 +264,5 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
-    }
-
-    override fun onDestroy() {
-        super.onDestroy() // TODO Delete
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
-
-    private fun searchDebounce(changedText: String) {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
-    }
-
-    private fun searchRequest(newSearchText: String) {
-        val query = normalizeString(newSearchText)
-        searchText = query
-
-        // TODO Удалить?
-        val songs: MutableList<Track> = mutableListOf()
-
-        if (query.isEmpty()) return
-
-        render(
-            SongsState.Loading
-        )
-
-        songsInteractor.findSongs(query, object : SongInteractor.SongsConsumer {
-            override fun consume(foundSongs: List<Track>?, errorMessage: String?) {
-                handler.post {
-                    if (foundSongs != null) {
-                        songs.addAll(foundSongs)
-                    }
-
-                    when {
-                        errorMessage != null -> {
-                            render(
-                                SongsState.Error(errorMessage)
-                            )
-                        }
-
-                        songs.isEmpty() -> {
-                            render(
-                                SongsState.Empty("not_found")
-                            )
-                        }
-
-                        else -> {
-                            render(
-                                SongsState.Content(
-                                    songs
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        })
     }
 }

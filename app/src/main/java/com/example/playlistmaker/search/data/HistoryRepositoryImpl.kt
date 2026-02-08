@@ -1,38 +1,27 @@
 package com.example.playlistmaker.search.data
 
-import android.content.SharedPreferences
+import com.example.playlistmaker.creator.Resource
 import com.example.playlistmaker.search.domain.api.HistoryRepository
 import com.example.playlistmaker.search.domain.models.Track
-import com.google.gson.Gson
 
-class HistoryRepositoryImpl(private val sharedPrefs: SharedPreferences): HistoryRepository {
-    companion object {
-        private const val KEY_HISTORY_TRACK = "key_history_track"
+class HistoryRepositoryImpl(
+    private val storage: StorageClient<ArrayList<Track>>): HistoryRepository {
+
+    override fun saveToHistory(track: Track) {
+        val songs = storage.getData()?.toMutableList() ?: mutableListOf()
+        songs.removeIf { it.trackId == track.trackId }
+        songs.add(0, track)
+        val limitedSongs = ArrayList(songs.take(10))
+
+        storage.storeData(limitedSongs)
     }
 
-    override fun saveTrack(track: Track) {
-        val jsonFromShared = sharedPrefs.getString(KEY_HISTORY_TRACK, null) ?: emptyList<Track>().toString()
-        var listTrackFromShared = Gson().fromJson(jsonFromShared, Array<Track>::class.java).toMutableList()
-
-        listTrackFromShared.removeIf { it.trackId == track.trackId }
-        listTrackFromShared.add(0, track)
-        listTrackFromShared = listTrackFromShared.take(10).toMutableList()
-
-        sharedPrefs
-            .edit()
-            .putString(KEY_HISTORY_TRACK, Gson().toJson(listTrackFromShared))
-            .apply()
-    }
-
-    override fun getHistory(): MutableList<Track> {
-        val jsonFromShared = sharedPrefs.getString(KEY_HISTORY_TRACK, null) ?: emptyList<Track>().toString()
-        return Gson().fromJson(jsonFromShared, Array<Track>::class.java).toMutableList()
+    override fun getHistory(): Resource<List<Track>> {
+        val songs = storage.getData() ?: listOf()
+        return Resource.Success(songs)
     }
 
     override fun clearHistory() {
-        sharedPrefs
-            .edit()
-            .remove(KEY_HISTORY_TRACK)
-            .apply()
+        storage.clearData()
     }
 }
