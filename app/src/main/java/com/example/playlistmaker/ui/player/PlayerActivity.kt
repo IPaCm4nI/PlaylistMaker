@@ -17,8 +17,8 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.ui.search.SearchActivity
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.search.ui.activity.SearchActivity
+import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
