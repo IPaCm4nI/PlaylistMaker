@@ -16,5 +16,4 @@ class HistoryInteractorImpl(private val repository: HistoryRepository): HistoryI
     override fun clearHistory() {
         repository.clearHistory()
     }
-
 }

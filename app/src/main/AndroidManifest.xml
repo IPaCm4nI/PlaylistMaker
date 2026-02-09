@@ -26,7 +26,7 @@
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Main"/>
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".settings.ui.activity.SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Settings"
             />
@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.player.PlayerActivity"
+            android:name=".player.ui.activity.PlayerActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Search"
             />

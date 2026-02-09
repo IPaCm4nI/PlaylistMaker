@@ -1,25 +1,26 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import com.example.playlistmaker.domain.api.ThemeInteractor
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.creator.Creator
 
-
 class App: Application() {
-
-    lateinit var themeInteractor: ThemeInteractor
-    companion object {
-        const val PREFERENCES_FILE = "preferences_file"
-        const val THEME_KEY = "theme_key"
-    }
-
     override fun onCreate() {
         super.onCreate()
 
         Creator.application = this
 
-        themeInteractor = Creator.provideThemeInteractor()
+        val themeInteractor = Creator.provideThemeInteractor(this)
 
-        themeInteractor.getTheme()
+        applyTheme(themeInteractor.getTheme())
+    }
+
+    companion object {
+        fun applyTheme(isDark: Boolean) {
+            AppCompatDelegate.setDefaultNightMode(
+                if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
     }
 }

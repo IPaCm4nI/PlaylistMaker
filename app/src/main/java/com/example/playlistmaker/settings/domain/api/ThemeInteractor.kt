@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.settings.domain.api
 
 interface ThemeInteractor {
     fun getTheme(): Boolean

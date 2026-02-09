@@ -24,7 +24,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.models.SongsState
 import com.example.playlistmaker.search.ui.view_model.SongsViewModel
-import com.example.playlistmaker.ui.player.PlayerActivity
+import com.example.playlistmaker.player.ui.activity.PlayerActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 

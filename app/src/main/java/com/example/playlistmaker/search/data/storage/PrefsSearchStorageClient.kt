@@ -6,7 +6,7 @@ import com.example.playlistmaker.search.data.StorageClient
 import com.google.gson.Gson
 import java.lang.reflect.Type
 
-class PrefsStorageClient<T>(
+class PrefsSearchStorageClient<T>(
         private val context: Context,
         private val dataKey: String,
         private val type: Type): StorageClient<T> {
@@ -26,7 +26,7 @@ class PrefsStorageClient<T>(
         if (dataJson == null) {
             return null
         } else {
-            return  gson.fromJson(dataJson, type)
+            return gson.fromJson(dataJson, type)
         }
     }
 

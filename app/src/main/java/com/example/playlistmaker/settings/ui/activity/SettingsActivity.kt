@@ -1,17 +1,14 @@
-package com.example.playlistmaker.ui.settings
+package com.example.playlistmaker.settings.ui.activity
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.playlistmaker.App
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.api.ThemeInteractor
+import com.example.playlistmaker.settings.ui.view_model.SettingsViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 
@@ -21,12 +18,17 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var shareButton: TextView
     private lateinit var supportButton: TextView
     private lateinit var contractButton: TextView
-    private lateinit var themeInteractor: ThemeInteractor
+    private var viewModel: SettingsViewModel? = null
+    private var suppressThemeListener = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        viewModel = ViewModelProvider(this, SettingsViewModel.getFactory())
+            .get(SettingsViewModel::class.java)
+
         setContentView(R.layout.activity_settings)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -34,42 +36,37 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        themeInteractor = (application as App).themeInteractor
-
         themeSwitcher = findViewById(R.id.themeSwitcher)
         toolbarSettingsId = findViewById(R.id.toolbar_settings)
         shareButton = findViewById(R.id.share)
         supportButton = findViewById(R.id.support)
         contractButton = findViewById(R.id.contract)
 
-        themeSwitcher.isChecked = themeInteractor.getTheme()
+        viewModel?.observerIsTheme()?.observe(this) {
+            suppressThemeListener = true
+            themeSwitcher.isChecked = it
+            suppressThemeListener = false
+        }
+
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            themeInteractor.setTheme(checked)
+            if (suppressThemeListener) return@setOnCheckedChangeListener
+            viewModel?.setTheme(checked)
+        }
+
+        shareButton.setOnClickListener {
+            viewModel?.shareApp()
+        }
+
+        supportButton.setOnClickListener {
+            viewModel?.openSupport()
+        }
+
+        contractButton.setOnClickListener {
+            viewModel?.openTerms()
         }
 
         toolbarSettingsId.setNavigationOnClickListener {
             finish()
-        }
-
-        shareButton.setOnClickListener {
-            val intentShare = Intent(Intent.ACTION_SEND)
-            intentShare.type = "text/plain"
-            intentShare.putExtra(Intent.EXTRA_TEXT,getString(R.string.link_to_praktikum))
-            startActivity(Intent.createChooser(intentShare, getString(R.string.title_share)))
-        }
-
-        supportButton.setOnClickListener {
-            val intentSupport = Intent(Intent.ACTION_SENDTO)
-            intentSupport.data = Uri.parse("mailto:")
-            intentSupport.putExtra(Intent.EXTRA_EMAIL, arrayOf(R.string.support_mail))
-            intentSupport.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.subject_mail))
-            intentSupport.putExtra(Intent.EXTRA_TEXT, getString(R.string.text_mail))
-            startActivity(intentSupport)
-        }
-
-        contractButton.setOnClickListener {
-            val intentSupport = Intent(Intent.ACTION_VIEW, getString(R.string.link_offer).toUri())
-            startActivity(intentSupport)
         }
     }
 }
