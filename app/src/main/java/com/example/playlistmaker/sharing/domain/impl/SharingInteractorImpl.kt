@@ -28,7 +28,7 @@ class SharingInteractorImpl(
 
     private fun getSupportEmailData(): EmailData {
         return EmailData(
-            email = arrayListOf(resourceProvider.getString(R.string.support_mail)),
+            email = arrayOf(resourceProvider.getString(R.string.support_mail)),
             subject = resourceProvider.getString(R.string.subject_mail),
             text = resourceProvider.getString(R.string.text_mail)
         )

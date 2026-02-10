@@ -14,20 +14,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(private val url: String): ViewModel() {
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val DELAY = 500L
-
-        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(trackUrl)
-            }
-        }
-    }
-
     private val mediaPlayer = MediaPlayer()
 
     private val handler = Handler(Looper.getMainLooper())
@@ -46,7 +32,7 @@ class PlayerViewModel(private val url: String): ViewModel() {
                 )
             )
 
-            handler.postDelayed(this, DELAY)
+            handler.postDelayed(this, DELAY_UPDATE_TIMER)
         }
     }
 
@@ -94,7 +80,7 @@ class PlayerViewModel(private val url: String): ViewModel() {
         )
 
         handler.removeCallbacks(currentTimeRunnable)
-        handler.postDelayed(currentTimeRunnable, DELAY)
+        handler.postDelayed(currentTimeRunnable, DELAY_UPDATE_TIMER)
     }
 
     private fun pausePlayer() {
@@ -138,7 +124,6 @@ class PlayerViewModel(private val url: String): ViewModel() {
         }
     }
 
-
     fun onPause() {
         pausePlayer()
     }
@@ -147,5 +132,19 @@ class PlayerViewModel(private val url: String): ViewModel() {
         super.onCleared()
         mediaPlayer.release()
         resetTimer()
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY_UPDATE_TIMER = 500L
+
+        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                PlayerViewModel(trackUrl)
+            }
+        }
     }
 }
