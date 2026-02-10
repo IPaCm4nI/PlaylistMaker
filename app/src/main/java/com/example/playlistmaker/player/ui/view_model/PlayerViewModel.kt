@@ -36,10 +36,6 @@ class PlayerViewModel(private val url: String): ViewModel() {
         }
     }
 
-    init {
-        preparePlayer()
-    }
-
     private val playerState = MutableLiveData(
         PlayerState(
             STATE_DEFAULT,
@@ -49,7 +45,7 @@ class PlayerViewModel(private val url: String): ViewModel() {
     )
     fun observerPlayerState(): LiveData<PlayerState> = playerState
 
-    private fun preparePlayer() {
+    fun preparePlayer() {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {

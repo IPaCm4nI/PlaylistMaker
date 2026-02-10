@@ -83,6 +83,8 @@ class PlayerActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, PlayerViewModel.getFactory(track.previewUrl))
             .get(PlayerViewModel::class.java)
 
+        viewModel.preparePlayer()
+
         viewModel.observerPlayerState().observe(this) {
             playButton.isSelected = !it.isPlayButton
             currentTime.text = it.progress

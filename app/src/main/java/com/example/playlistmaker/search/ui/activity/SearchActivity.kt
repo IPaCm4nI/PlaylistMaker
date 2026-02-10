@@ -64,6 +64,11 @@ class SearchActivity : AppCompatActivity() {
         moveToPlayer(it)
     }
 
+    private enum class Error {
+        NOT_FOUND,
+        NOT_CONNECTION
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -179,11 +184,11 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showPage(text: String) {
         when(text) {
-            "not_found" -> {
+           Error.NOT_FOUND.name.lowercase() -> {
                 placeholderImage.setImageResource(R.drawable.not_found)
                 placeholderId.text = getString(R.string.nothing_search)
             }
-            "not_connection" -> {
+            Error.NOT_CONNECTION.name.lowercase() -> {
                 placeholderImage.setImageResource(R.drawable.not_connection)
                 placeholderId.text = getString(R.string.trouble_network)
                 updateButton.isVisible = true
