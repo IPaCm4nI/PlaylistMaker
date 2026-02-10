@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".App"
@@ -15,22 +16,22 @@
         android:supportsRtl="true"
         >
         <activity
-            android:name=".ui.search.SearchActivity"
+            android:name=".search.ui.activity.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="stateVisible|adjustResize"
             android:theme="@style/Theme.PlaylistMaker.Search"
             />
         <activity
-            android:name=".ui.mediateka.MediatekaActivity"
+            android:name=".mediateka.ui.MediatekaActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Main"/>
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".settings.ui.activity.SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Settings"
             />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".main.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker.Main">
             <intent-filter>
@@ -40,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.player.PlayerActivity"
+            android:name=".player.ui.activity.PlayerActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Search"
             />
