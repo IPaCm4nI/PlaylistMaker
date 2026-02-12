@@ -18,7 +18,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
@@ -27,6 +26,7 @@ import com.example.playlistmaker.search.ui.view_model.SongsViewModel
 import com.example.playlistmaker.player.ui.activity.PlayerActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private var searchText: String = SEARCH_DEF
@@ -52,14 +52,14 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var textWatcher: TextWatcher? = null
     private var isClickAllowed = true
-    private var viewModel: SongsViewModel? = null
+    private val viewModel by viewModel<SongsViewModel>()
     private var searchAdapter = TrackAdapter {
-        viewModel?.saveToHistory(it)
+        viewModel.saveToHistory(it)
 
         moveToPlayer(it)
     }
     private var historyAdapter = TrackAdapter {
-        viewModel?.saveToHistory(it)
+        viewModel.saveToHistory(it)
 
         moveToPlayer(it)
     }
@@ -85,10 +85,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerViewHistory = findViewById(R.id.listHistory)
         recyclerViewHistory.adapter = historyAdapter
 
-        viewModel = ViewModelProvider(this, SongsViewModel.getFactory())
-            .get(SongsViewModel::class.java)
-
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             render(it)
         }
 
@@ -116,7 +113,7 @@ class SearchActivity : AppCompatActivity() {
             if (text.isNullOrEmpty() && editTextId.hasFocus()) {
                 showHistory()
             } else {
-                viewModel?.searchDebounce(text?.toString() ?: "")
+                viewModel.searchDebounce(text?.toString() ?: "")
                 showRecyclerSongs()
             }
         }
@@ -141,12 +138,12 @@ class SearchActivity : AppCompatActivity() {
 
         updateButton.setOnClickListener {
             if (searchText.isNotEmpty()) {
-                viewModel?.searchNow(searchText)
+                viewModel.searchNow(searchText)
             }
         }
 
         clearHistory.setOnClickListener {
-            viewModel?.clearHistory()
+            viewModel.clearHistory()
             layoutHistory.isVisible = false
         }
     }
@@ -165,7 +162,7 @@ class SearchActivity : AppCompatActivity() {
 
         if(searchText.isNotEmpty()) {
             editTextId.setSelection(searchText.length)
-            viewModel?.searchDebounce(searchText)
+            viewModel.searchDebounce(searchText)
         }
     }
 
@@ -202,7 +199,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        viewModel?.getHistory()
+        viewModel.getHistory()
     }
 
     private fun showResults(songs: List<Track>) {

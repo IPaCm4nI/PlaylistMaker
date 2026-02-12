@@ -32,33 +32,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object Creator {
     lateinit var application: Application
-    fun getSongApi(): SongApi {
-        return Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(SongApi::class.java)
-    }
-
-    private fun getSongsRepository(context: Context): SongRepository {
-        return SongRepositoryImpl(RetrofitNetworkClient(getSongApi(), context))
-    }
-
-    fun provideSongsInteractor(context: Context): SongInteractor {
-        return SongInteractorImpl(getSongsRepository(context))
-    }
-
-    private fun getHistoryRepository(context: Context):  HistoryRepository {
-        return HistoryRepositoryImpl(PrefsSearchStorageClient(
-            context,
-            "KEY_HISTORY_TRACK",
-            object: TypeToken<ArrayList<Track>>() {}.type
-        ))
-    }
-
-    fun provideHistoryInteractor(context: Context): HistoryInteractor {
-        return HistoryInteractorImpl(getHistoryRepository(context))
-    }
 
     private fun getThemeRepository(context: Context): ThemeRepository {
         return ThemeRepositoryImpl(

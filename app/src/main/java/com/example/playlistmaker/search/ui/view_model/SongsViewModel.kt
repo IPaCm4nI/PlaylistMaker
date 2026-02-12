@@ -25,15 +25,6 @@ class SongsViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = (this[APPLICATION_KEY] as Application)
-                val songInteractor = Creator.provideSongsInteractor(app)
-                val historyInteractor = Creator.provideHistoryInteractor(app)
-                SongsViewModel(songInteractor, historyInteractor)
-            }
-        }
     }
     private var latestSearchText: String? = null
     private val handler = Handler(Looper.getMainLooper())
