@@ -10,11 +10,11 @@ import java.util.concurrent.Executors
 
 val interactorModule = module {
 
-    single<HistoryInteractor> {
+    factory<HistoryInteractor> {
         HistoryInteractorImpl(get())
     }
 
-    single<SongInteractor> {
+    factory<SongInteractor> {
         SongInteractorImpl(get(), get())
     }
 

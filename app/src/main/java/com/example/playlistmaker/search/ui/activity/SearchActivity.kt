@@ -25,7 +25,6 @@ import com.example.playlistmaker.search.ui.models.SongsState
 import com.example.playlistmaker.search.ui.view_model.SongsViewModel
 import com.example.playlistmaker.player.ui.activity.PlayerActivity
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
@@ -239,7 +238,7 @@ class SearchActivity : AppCompatActivity() {
     private fun moveToPlayer(track: Track) {
         if (clickDebounce()) {
             val intentPlayer = Intent(this, PlayerActivity::class.java)
-            intentPlayer.putExtra(KEY_TRACK, Gson().toJson(track))
+            intentPlayer.putExtra(KEY_TRACK, track)
             startActivity(intentPlayer)
         }
     }

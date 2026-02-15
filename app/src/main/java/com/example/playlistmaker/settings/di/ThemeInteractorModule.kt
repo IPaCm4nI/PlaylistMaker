@@ -5,7 +5,7 @@ import com.example.playlistmaker.settings.domain.impl.ThemeInteractorImpl
 import org.koin.dsl.module
 
 val themeInteractorModule = module {
-    single<ThemeInteractor> {
+    factory<ThemeInteractor> {
         ThemeInteractorImpl(get())
     }
 }

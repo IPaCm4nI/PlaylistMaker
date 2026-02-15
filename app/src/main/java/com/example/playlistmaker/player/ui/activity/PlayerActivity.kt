@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.widget.ImageButton
@@ -17,7 +18,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.activity.SearchActivity
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -40,7 +40,13 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var currentTime: TextView
 
     private val track: Track by lazy {
-        Gson().fromJson(intent.getStringExtra(SearchActivity.Companion.KEY_TRACK), Track::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(SearchActivity.KEY_TRACK, Track::class.java)
+                ?: error("Track not found")
+        } else {
+            intent.getParcelableExtra(SearchActivity.KEY_TRACK)
+                ?: error("Track not found")
+        }
     }
     private val viewModel by viewModel<PlayerViewModel> { parametersOf(track.previewUrl) }
 

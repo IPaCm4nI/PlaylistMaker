@@ -5,7 +5,7 @@ import com.example.playlistmaker.settings.domain.api.ThemeRepository
 import org.koin.dsl.module
 
 val repositorySettingsModule = module {
-    single<ThemeRepository> {
+    factory<ThemeRepository> {
         ThemeRepositoryImpl(get())
     }
 }

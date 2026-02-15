@@ -11,9 +11,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private val url: String
+    private val url: String,
+    private val mediaPlayer: MediaPlayer
 ): ViewModel() {
-    private val mediaPlayer = MediaPlayer()
     private val handler = Handler(Looper.getMainLooper())
 
     private val dateFormatStart = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0).trim()
