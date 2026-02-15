@@ -7,12 +7,11 @@ import com.google.gson.Gson
 import java.lang.reflect.Type
 
 class PrefsSearchStorageClient<T>(
-        private val context: Context,
+        private val gson: Gson,
+        private val prefs: SharedPreferences,
         private val dataKey: String,
-        private val type: Type): StorageClient<T> {
-
-    private val prefs: SharedPreferences = context.getSharedPreferences("FILE_HISTORY_TRACK", Context.MODE_PRIVATE)
-    private val gson = Gson()
+        private val type: Type
+): StorageClient<T> {
 
     override fun storeData(data: T) {
         prefs

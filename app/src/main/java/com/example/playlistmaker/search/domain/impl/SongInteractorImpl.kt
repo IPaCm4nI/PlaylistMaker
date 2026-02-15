@@ -1,12 +1,14 @@
 package com.example.playlistmaker.search.domain.impl
 
-import com.example.playlistmaker.creator.Resource
+import com.example.playlistmaker.utils.Resource
 import com.example.playlistmaker.search.domain.api.SongInteractor
 import com.example.playlistmaker.search.domain.api.SongRepository
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
 
-class SongInteractorImpl(private val repository: SongRepository): SongInteractor {
-    val executor = Executors.newCachedThreadPool()
+class SongInteractorImpl(
+    private val repository: SongRepository,
+    private val executor: Executor
+): SongInteractor {
 
     override fun findSongs(
         query: String,

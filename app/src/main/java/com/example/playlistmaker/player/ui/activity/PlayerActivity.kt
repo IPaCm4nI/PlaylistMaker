@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.widget.ImageButton
@@ -11,14 +12,14 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.activity.SearchActivity
-import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var backArrow: ImageButton
@@ -37,7 +38,17 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var groupCountry: Group
     private lateinit var country: TextView
     private lateinit var currentTime: TextView
-    private lateinit var viewModel: PlayerViewModel
+
+    private val track: Track by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(SearchActivity.KEY_TRACK, Track::class.java)
+                ?: error("Track not found")
+        } else {
+            intent.getParcelableExtra(SearchActivity.KEY_TRACK)
+                ?: error("Track not found")
+        }
+    }
+    private val viewModel by viewModel<PlayerViewModel> { parametersOf(track.previewUrl) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,11 +89,6 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.onPlayButtonClicked()
         }
 
-        val track = Gson().fromJson(intent.getStringExtra(SearchActivity.Companion.KEY_TRACK), Track::class.java)
-
-        viewModel = ViewModelProvider(this, PlayerViewModel.getFactory(track.previewUrl))
-            .get(PlayerViewModel::class.java)
-
         viewModel.preparePlayer()
 
         viewModel.observerPlayerState().observe(this) {
@@ -118,7 +124,7 @@ class PlayerActivity : AppCompatActivity() {
 
         if (track.releaseDate?.isNotEmpty() == true) {
             groupYear.isVisible = true
-            year.text = track.releaseDate.substringBefore("-")
+            year.text = track.releaseDate?.substringBefore("-")
         } else {
             groupYear.isVisible = false
         }

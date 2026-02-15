@@ -6,16 +6,14 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.player.ui.models.PlayerState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(private val url: String): ViewModel() {
-    private val mediaPlayer = MediaPlayer()
-
+class PlayerViewModel(
+    private val url: String,
+    private val mediaPlayer: MediaPlayer
+): ViewModel() {
     private val handler = Handler(Looper.getMainLooper())
 
     private val dateFormatStart = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0).trim()
@@ -136,11 +134,5 @@ class PlayerViewModel(private val url: String): ViewModel() {
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
         private const val DELAY_UPDATE_TIMER = 500L
-
-        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(trackUrl)
-            }
-        }
     }
 }
