@@ -5,10 +5,9 @@ import android.content.SharedPreferences
 import com.example.playlistmaker.settings.data.StorageClient
 
 class PrefsSettingsStorageClient(
-        private val context: Context,
-        private val dataKey: String): StorageClient {
-
-    private val prefs: SharedPreferences = context.getSharedPreferences("PREFERENCES_FILE", Context.MODE_PRIVATE)
+        private val dataKey: String,
+        private val prefs: SharedPreferences,
+    ): StorageClient {
 
     override fun storeData(isTheme: Boolean) {
         prefs

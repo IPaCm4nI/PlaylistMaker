@@ -13,8 +13,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 val dataModule = module {
 
@@ -39,7 +37,6 @@ val dataModule = module {
 
     single<StorageClient<ArrayList<Track>>> {
         PrefsSearchStorageClient(
-            androidContext(),
             get(),
             get(),
             "KEY_HISTORY_TRACK",
