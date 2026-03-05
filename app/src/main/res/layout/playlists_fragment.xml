@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
+    style="@style/LayoutVertical">
+
+    <Button
+        android:id="@+id/createNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ButtonShow"
+        android:text="@string/new_playlists"/>
+
+    <LinearLayout
+        android:id="@+id/placeholder_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/LayoutVertical"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/placeholderImage"
+            style="@style/ImageView.Placeholder.Media"
+            tools:src="@drawable/not_found" />
+
+        <TextView
+            android:id="@+id/placeholderMessage"
+            style="@style/TextViewDefault.Placeholder.Media"
+            tools:text="@string/empty_playlists" />
+    </LinearLayout>
+
+</LinearLayout>

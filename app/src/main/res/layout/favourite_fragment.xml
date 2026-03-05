@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
+    style="@style/LayoutVertical">
+
+    <LinearLayout
+        android:id="@+id/placeholder_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/LayoutVertical"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/placeholderImage"
+            style="@style/ImageView.Placeholder.Media"
+            tools:src="@drawable/not_found" />
+
+        <TextView
+            android:id="@+id/placeholderMessage"
+            style="@style/TextViewDefault.Placeholder.Media"
+            tools:text="@string/empty_mediateka" />
+    </LinearLayout>
+
+</LinearLayout>
