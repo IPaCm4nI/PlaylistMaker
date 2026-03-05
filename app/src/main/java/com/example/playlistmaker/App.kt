@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.mediateka.di.viewModelMediatekaModule
 import com.example.playlistmaker.player.di.viewModelPlayerModule
 import com.example.playlistmaker.search.di.dataModule
 import com.example.playlistmaker.search.di.interactorModule
@@ -30,7 +31,7 @@ class App: Application(), KoinComponent {
             modules(dataModule, repositoryModule, interactorModule, viewModelSearchModule,
                 viewModelPlayerModule, dataSettingsModule, repositorySettingsModule,
                 themeInteractorModule, viewModelSettingsModule, dataSharingModule,
-                sharingInteractorModule
+                sharingInteractorModule, viewModelMediatekaModule
             )
         }
 

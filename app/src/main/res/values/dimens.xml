@@ -31,4 +31,5 @@
     <dimen name="dp_17">17dp</dimen>
     <dimen name="dp_44">44dp</dimen>
     <dimen name="dp_140">140dp</dimen>
+    <dimen name="dp_109">109dp</dimen>
 </resources>
