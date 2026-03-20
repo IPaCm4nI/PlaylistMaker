@@ -13,6 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MediatekaFragment: Fragment() {
     private lateinit var binding: FragmentMediatekaBinding
+    private lateinit var tabLayout: TabLayoutMediator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,11 +31,19 @@ class MediatekaFragment: Fragment() {
         val adapter = FragmentsAdapter(requireActivity())
         binding.viewPager.adapter = adapter
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, pos ->
+        tabLayout = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, pos ->
             when(pos) {
                 0 -> tab.text = getString(R.string.favourite_track)
                 1 -> tab.text = getString(R.string.playlists)
             }
-        }.attach()
+
+        }
+        tabLayout.attach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        tabLayout.detach()
     }
 }
