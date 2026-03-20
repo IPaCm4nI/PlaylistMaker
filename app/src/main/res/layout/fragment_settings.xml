@@ -2,21 +2,23 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:background="?attr/colorPrimary"
-    style="@style/LayoutVertical">
+    style="@style/LayoutVertical"
+    tools:context=".settings.ui.fragment.SettingsFragment">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_settings"
-        app:title="@string/settings"
-        app:titleTextAppearance="@style/MaterialToolBar.Settings.Title"
-        style="@style/MaterialToolBar"/>
+    <TextView
+        android:id="@+id/titleFragment"
+        android:text="@string/settings"
+        style="@style/TextViewTitle" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/themeSwitcher"
         android:text="@string/theme"
-        style="@style/Switcher"
-        />
+        app:thumbTint="@color/thumbSwitch"
+        app:trackTint="@color/trackTint"
+        style="@style/Switcher" />
 
     <TextView
         android:id="@+id/share"

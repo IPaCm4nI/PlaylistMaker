@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
-    style="@style/LayoutVertical">
+    style="@style/LayoutVertical"
+    tools:context=".mediateka.ui.fragment.PlaylistsFragment">
 
     <Button
         android:id="@+id/createNew"

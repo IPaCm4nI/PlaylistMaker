@@ -1,9 +1,10 @@
-package com.example.playlistmaker.search.ui.activity
+package com.example.playlistmaker.search.ui.fragment
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.fragment.TrackViewHolder
 
 class TrackAdapter(val clickListener: trackClickListener): RecyclerView.Adapter<TrackViewHolder> () {
 

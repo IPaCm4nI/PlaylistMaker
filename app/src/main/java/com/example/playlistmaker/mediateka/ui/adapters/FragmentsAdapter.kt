@@ -3,8 +3,8 @@ package com.example.playlistmaker.mediateka.ui.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.playlistmaker.mediateka.ui.fragments.FavouriteFragment
-import com.example.playlistmaker.mediateka.ui.fragments.PlaylistsFragment
+import com.example.playlistmaker.mediateka.ui.fragment.FavouriteFragment
+import com.example.playlistmaker.mediateka.ui.fragment.PlaylistsFragment
 
 class FragmentsAdapter(
     host: FragmentActivity
