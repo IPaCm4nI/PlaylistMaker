@@ -15,10 +15,6 @@ val interactorModule = module {
     }
 
     factory<SongInteractor> {
-        SongInteractorImpl(get(), get())
-    }
-
-    single<Executor> {
-        Executors.newCachedThreadPool()
+        SongInteractorImpl(get())
     }
 }

@@ -1,10 +1,7 @@
 package com.example.playlistmaker.search.ui.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
@@ -20,24 +18,28 @@ import com.example.playlistmaker.player.ui.fragment.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.models.SongsState
 import com.example.playlistmaker.search.ui.view_model.SongsViewModel
+import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
     private var searchText: String = SEARCH_DEF
     private lateinit var binding: FragmentSearchBinding
-    private val handler = Handler(Looper.getMainLooper())
     private var textWatcher: TextWatcher? = null
     private var isClickAllowed = true
     private val viewModel by viewModel<SongsViewModel>()
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
+
     private var searchAdapter = TrackAdapter {
         viewModel.saveToHistory(it)
 
-        moveToPlayer(it)
+        onTrackClickDebounce(it)
     }
     private var historyAdapter = TrackAdapter {
         viewModel.saveToHistory(it)
 
-        moveToPlayer(it)
+        onTrackClickDebounce(it)
     }
 
     private enum class Error {
@@ -57,6 +59,17 @@ class SearchFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        onTrackClickDebounce = debounce(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(track)
+            )
+        }
 
         searchText = savedInstanceState?.getString(
             KEY_SEARCH,
@@ -196,15 +209,6 @@ class SearchFragment: Fragment() {
         binding.bUpdate.isVisible = false
     }
 
-    private fun moveToPlayer(track: Track) {
-        if (clickDebounce()) {
-            findNavController().navigate(
-                R.id.action_searchFragment_to_playerFragment,
-                PlayerFragment.createArgs(track)
-                )
-        }
-    }
-
     private fun render(state: SongsState) {
         when(state) {
             is SongsState.Loading -> showLoading()
@@ -218,17 +222,6 @@ class SearchFragment: Fragment() {
                 }
             }
         }
-    }
-
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY
-            )
-        }
-        return current
     }
 
     companion object {
