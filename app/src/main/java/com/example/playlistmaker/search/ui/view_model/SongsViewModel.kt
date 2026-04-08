@@ -6,10 +6,15 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.HistoryInteractor
 import com.example.playlistmaker.search.domain.api.SongInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.models.SongsState
+import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SongsViewModel(
     private val songInteractor: SongInteractor,
@@ -17,11 +22,14 @@ class SongsViewModel(
 ): ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
     private var latestSearchText: String? = null
-    private val handler = Handler(Looper.getMainLooper())
-
+    private val trackSearchDebounce = debounce<String>(
+        SEARCH_DEBOUNCE_DELAY,
+        viewModelScope,
+        true) { changedText ->
+        searchRequest(changedText)
+    }
     private val stateLiveData = MutableLiveData<SongsState>()
     fun observeState(): LiveData<SongsState> = stateLiveData
 
@@ -47,27 +55,15 @@ class SongsViewModel(
     }
 
     fun searchNow(query: String) {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         latestSearchText = query
-        searchRequest(query)
+        trackSearchDebounce(query)
     }
 
     fun searchDebounce(changedText: String) {
-        if (changedText == latestSearchText) {
-            return
+        if (latestSearchText != changedText) {
+            latestSearchText = changedText
+            trackSearchDebounce(changedText)
         }
-
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
     }
 
     private fun normalizeString(query: String?): String {
@@ -88,46 +84,45 @@ class SongsViewModel(
             SongsState.Loading
         )
 
-        songInteractor.findSongs(query, object : SongInteractor.SongsConsumer {
-            override fun consume(foundSongs: List<Track>?, errorMessage: String?) {
-                handler.post {
-                    val songs = mutableListOf<Track>()
-                    if (foundSongs != null) {
-                        songs.addAll(foundSongs)
-                    }
-
-                    when {
-                        errorMessage != null -> {
-                            renderState(
-                                SongsState.Error(errorMessage)
-                            )
-                        }
-
-                        songs.isEmpty() -> {
-                            renderState(
-                                SongsState.Empty("not_found")
-                            )
-                        }
-
-                        else -> {
-                            renderState(
-                                SongsState.Content(
-                                    songs
-                                )
-                            )
-                        }
-                    }
+        viewModelScope.launch {
+            songInteractor
+                .findSongs(query)
+                .collect { pair ->
+                    processResult(pair.first, pair.second)
                 }
+        }
+    }
+
+    private fun processResult(foundSongs: List<Track>?, errorMessage: String?) {
+        val songs = mutableListOf<Track>()
+        if (foundSongs != null) {
+            songs.addAll(foundSongs)
+        }
+
+        when {
+            errorMessage != null -> {
+                renderState(
+                    SongsState.Error(errorMessage)
+                )
             }
-        })
+
+            songs.isEmpty() -> {
+                renderState(
+                    SongsState.Empty("not_found")
+                )
+            }
+
+            else -> {
+                renderState(
+                    SongsState.Content(
+                        songs
+                    )
+                )
+            }
+        }
     }
 
     private fun renderState(state: SongsState) {
         stateLiveData.postValue(state)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 }
