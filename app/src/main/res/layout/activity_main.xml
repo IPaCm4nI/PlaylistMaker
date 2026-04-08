@@ -1,31 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
-    style="@style/LayoutVertical"
-    android:background="?attr/colorPrimary"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary" >
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/root_fragment_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
 
-    <TextView
-        style="@style/TextViewGlobal.Main"
-        android:text="@string/app_name" />
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/main_navigation_graph"
+        app:defaultNavHost="true"
 
-    <Button
-        android:id="@+id/base_search"
-        style="@style/ButtonMainMenu"
-        android:text="@string/search"
-        app:icon="@drawable/search" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"/>
 
-    <Button
-        android:id="@+id/mediateka"
-        style="@style/ButtonMainMenu"
-        android:text="@string/mediateka"
-        app:icon="@drawable/media" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
 
-    <Button
-        android:id="@+id/settings"
-        style="@style/ButtonMainMenu"
-        android:text="@string/settings"
-        app:icon="@drawable/setting" />
-</LinearLayout>
+        android:background="?attr/colorPrimary"
+        app:menu="@menu/bottom_menu"
+        app:itemTextColor="@color/bottom_item"
+        app:itemIconTint="@color/bottom_item"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

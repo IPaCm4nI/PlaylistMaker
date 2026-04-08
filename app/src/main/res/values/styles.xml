@@ -78,31 +78,18 @@
         <item name="android:layout_marginBottom">@dimen/dp_16</item>
     </style>
 
-    <style name="MaterialToolBar" parent="LayoutWrap">
+    <style name="TextViewTitle" parent="LayoutWrap">
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">?attr/colorPrimary</item>
-        <item name="navigationIcon">@drawable/back</item>
-        <item name="titleTextColor">?attr/colorOnPrimary</item>
-        <item name="contentInsetStart">@dimen/dp_0</item>
-        <item name="contentInsetStartWithNavigation">@dimen/dp_0</item>
-    </style>
-
-    <style name="MaterialToolBar.Settings.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textSize">@dimen/sp_22</item>
+        <item name="android:layout_marginStart">@dimen/dp_16</item>
+        <item name="android:layout_marginTop">@dimen/dp_14</item>
+        <item name="android:layout_marginBottom">@dimen/dp_16</item>
     </style>
-
-    <style name="MaterialToolBar.Search.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textFontWeight">500</item>
-        <item name="android:textSize">@dimen/sp_22</item>
-    </style>
-
 
     <style name="TextViewDefault" parent="TextViewGlobal">
         <item name="android:layout_width">match_parent</item>
@@ -257,6 +244,7 @@
     </style>
 
     <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:paddingTop">@dimen/dp_16</item>
         <item name="tabTextColor">?attr/colorSecondary</item>
         <item name="android:backgroundTint">?attr/colorPrimary</item>
         <item name="tabIndicatorColor">?attr/colorSecondary</item>

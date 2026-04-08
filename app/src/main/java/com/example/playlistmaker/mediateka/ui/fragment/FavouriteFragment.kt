@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateka.ui.fragments
+package com.example.playlistmaker.mediateka.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FavouriteFragmentBinding
+import com.example.playlistmaker.databinding.FragmentFavouriteBinding
 import com.example.playlistmaker.mediateka.ui.models.FavouriteState
 import com.example.playlistmaker.mediateka.ui.view_model.FavouriteViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouriteFragment: Fragment() {
-    private lateinit var binding: FavouriteFragmentBinding
+    private lateinit var binding: FragmentFavouriteBinding
 
     private val viewModelFavourite by viewModel<FavouriteViewModel>()
 
@@ -22,7 +22,7 @@ class FavouriteFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FavouriteFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentFavouriteBinding.inflate(inflater, container, false)
 
         return binding.root
     }
