@@ -8,7 +8,7 @@ import org.koin.dsl.module
 val viewModelMediatekaModule = module {
 
     viewModel {
-        FavouriteViewModel()
+        FavouriteViewModel(get())
     }
 
     viewModel {

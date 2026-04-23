@@ -9,10 +9,10 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     factory<SongRepository> {
-        SongRepositoryImpl(get())
+        SongRepositoryImpl(get(), get())
     }
 
     factory<HistoryRepository> {
-        HistoryRepositoryImpl(get())
+        HistoryRepositoryImpl(get(), get())
     }
 }

@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
-    style="@style/LayoutVertical"
     tools:context=".mediateka.ui.fragment.FavouriteFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingVertical="8dp"
+        android:visibility="gone"
+        tools:listitem="@layout/song"
+        tools:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/placeholder_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/LayoutVertical"
-        android:visibility="visible" >
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/placeholderImage"
@@ -25,4 +35,4 @@
             tools:text="@string/empty_mediateka" />
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

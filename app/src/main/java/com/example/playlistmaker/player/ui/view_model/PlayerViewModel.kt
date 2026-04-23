@@ -1,13 +1,13 @@
 package com.example.playlistmaker.player.ui.view_model
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.mediateka.domain.db.api.FavouriteTrackInteractor
 import com.example.playlistmaker.player.ui.models.PlayerState
+import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,13 +16,17 @@ import java.util.Locale
 
 class PlayerViewModel(
     private val url: String,
-    private val mediaPlayer: MediaPlayer
+    private val mediaPlayer: MediaPlayer,
+    private val favouriteTrackInteractor: FavouriteTrackInteractor
 ): ViewModel() {
     private var timerJob: Job? = null
     private val playerState = MutableLiveData<PlayerState>(
         PlayerState.Default()
     )
     fun observerPlayerState(): LiveData<PlayerState> = playerState
+
+    private val isFavourite = MutableLiveData<Boolean>()
+    fun observerIsFavourite(): LiveData<Boolean> = isFavourite
 
     fun preparePlayer() {
         mediaPlayer.setDataSource(url)
@@ -104,6 +108,24 @@ class PlayerViewModel(
         mediaPlayer.stop()
         mediaPlayer.release()
         playerState.value = PlayerState.Default()
+    }
+
+    fun setFavourite(value: Boolean) {
+        isFavourite.postValue(value)
+    }
+
+    fun onFavouriteClicked(track: Track) {
+        viewModelScope.launch {
+            val currentFavourite = isFavourite.value ?: false
+
+            if (currentFavourite) {
+                favouriteTrackInteractor.deleteTrack(track)
+            } else {
+                favouriteTrackInteractor.insertTrack(track)
+            }
+
+            isFavourite.postValue(!currentFavourite)
+        }
     }
 
     companion object {
