@@ -21,8 +21,8 @@ class FavouriteTrackRepositoryImpl(
         appDatabase.trackDao().insertTrack(convertFromTrack(trackWithTimestamp))
     }
 
-    override suspend fun deleteTrack(track: Track) {
-        appDatabase.trackDao().deleteTrack(convertFromTrack(track))
+    override suspend fun deleteTrack(trackId: Int) {
+        appDatabase.trackDao().deleteTrack(trackId)
     }
 
     override fun getTracks(): Flow<List<Track>> {

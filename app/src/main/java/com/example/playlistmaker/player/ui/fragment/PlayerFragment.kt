@@ -47,7 +47,7 @@ class PlayerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.setFavourite(track.isFavourite)
+        viewModel.checkFavourite(track.trackId)
 
         binding.playButton.setOnClickListener {
             viewModel.onPlayButtonClicked()

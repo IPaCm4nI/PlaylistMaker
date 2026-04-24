@@ -110,8 +110,12 @@ class PlayerViewModel(
         playerState.value = PlayerState.Default()
     }
 
-    fun setFavourite(value: Boolean) {
-        isFavourite.postValue(value)
+    fun checkFavourite(trackId: Int) {
+        viewModelScope.launch {
+            favouriteTrackInteractor.getTracks().collect { tracks ->
+                isFavourite.postValue(tracks.any { it.trackId == trackId })
+            }
+        }
     }
 
     fun onFavouriteClicked(track: Track) {
@@ -119,7 +123,7 @@ class PlayerViewModel(
             val currentFavourite = isFavourite.value ?: false
 
             if (currentFavourite) {
-                favouriteTrackInteractor.deleteTrack(track)
+                favouriteTrackInteractor.deleteTrack(track.trackId)
             } else {
                 favouriteTrackInteractor.insertTrack(track)
             }

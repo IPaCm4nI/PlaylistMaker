@@ -1,7 +1,6 @@
 package com.example.playlistmaker.mediateka.data.db.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,8 +12,8 @@ interface TrackDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: TrackEntity)
 
-    @Delete(entity = TrackEntity::class)
-    suspend fun deleteTrack(track: TrackEntity)
+    @Query("DELETE FROM favourite_table WHERE id = :id")
+    suspend fun deleteTrack(id: Int)
 
     @Query("SELECT * FROM favourite_table")
     fun getTracks(): Flow<List<TrackEntity>>
