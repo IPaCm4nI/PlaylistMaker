@@ -9,7 +9,7 @@ class HistoryInteractorImpl(private val repository: HistoryRepository): HistoryI
         repository.saveToHistory(track)
     }
 
-    override fun getHistory(consumer: HistoryInteractor.HistoryConsumer) {
+    override suspend fun getHistory(consumer: HistoryInteractor.HistoryConsumer) {
         consumer.consume(repository.getHistory().data)
     }
 

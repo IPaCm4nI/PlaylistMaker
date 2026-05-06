@@ -47,9 +47,7 @@ class PlayerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.favoriteButton.setOnClickListener {
-            binding.favoriteButton.isSelected = !binding.favoriteButton.isSelected
-        }
+        viewModel.checkFavourite(track.trackId)
 
         binding.playButton.setOnClickListener {
             viewModel.onPlayButtonClicked()
@@ -59,11 +57,19 @@ class PlayerFragment: Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.favoriteButton.setOnClickListener {
+            viewModel.onFavouriteClicked(track)
+        }
+
         viewModel.preparePlayer()
 
         viewModel.observerPlayerState().observe(viewLifecycleOwner) {
             binding.playButton.isSelected = !it.isPlayButton
             binding.currentTime.text = it.progress
+        }
+
+        viewModel.observerIsFavourite().observe(viewLifecycleOwner) { isFavourite ->
+            binding.favoriteButton.isSelected = isFavourite
         }
 
         Glide

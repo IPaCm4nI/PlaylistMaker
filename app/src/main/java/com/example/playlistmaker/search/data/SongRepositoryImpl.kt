@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.mediateka.data.db.AppDatabase
 import com.example.playlistmaker.utils.Resource
 import com.example.playlistmaker.search.domain.api.SongRepository
 import com.example.playlistmaker.search.domain.models.Track
@@ -10,12 +11,18 @@ import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class SongRepositoryImpl(private val networkClient: NetworkClient) : SongRepository {
+class SongRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val appDatabase: AppDatabase
+) : SongRepository {
+
     override fun findSongs(query: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(SongRequest(query))
         when (response.resultCode) {
             200 -> {
                 with(response as SongResponse) {
+                    val idTracks = appDatabase.trackDao().getIdTrack()
+
                     val data = response.results.map {
                         Track(
                             trackId = it.trackId,
@@ -30,7 +37,9 @@ class SongRepositoryImpl(private val networkClient: NetworkClient) : SongReposit
                             releaseDate = it.releaseDate,
                             primaryGenreName = it.primaryGenreName,
                             country = it.country,
-                            previewUrl = it.previewUrl
+                            previewUrl = it.previewUrl,
+                            addedAt = 0L,
+                            isFavourite = it.trackId in idTracks
                         )
                     }
 

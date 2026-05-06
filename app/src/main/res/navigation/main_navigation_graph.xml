@@ -18,7 +18,11 @@
         android:id="@+id/mediatekaFragment"
         android:name="com.example.playlistmaker.mediateka.ui.fragment.MediatekaFragment"
         android:label="fragment_mediateka"
-        tools:layout="@layout/fragment_mediateka" />
+        tools:layout="@layout/fragment_mediateka" >
+        <action
+            android:id="@+id/action_mediatekaFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.playlistmaker.player.ui.fragment.PlayerFragment"

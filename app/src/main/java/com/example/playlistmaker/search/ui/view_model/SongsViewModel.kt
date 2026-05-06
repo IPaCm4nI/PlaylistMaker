@@ -38,13 +38,15 @@ class SongsViewModel(
     }
 
     fun getHistory() {
-        historyInteractor.getHistory(object: HistoryInteractor.HistoryConsumer {
-            override fun consume(searchHistory: List<Track>?) {
-                renderState(
-                    SongsState.Content(searchHistory ?: emptyList(), true)
-                )
-            }
-        })
+        viewModelScope.launch {
+            historyInteractor.getHistory(object : HistoryInteractor.HistoryConsumer {
+                override fun consume(searchHistory: List<Track>?) {
+                    renderState(
+                        SongsState.Content(searchHistory ?: emptyList(), true)
+                    )
+                }
+            })
+        }
     }
 
     fun clearHistory() {
