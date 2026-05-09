@@ -5,7 +5,6 @@ import com.example.playlistmaker.mediateka.domain.db.impl.FavouriteTrackInteract
 import org.koin.dsl.module
 
 val interactorMediaModule = module {
-
     single<FavouriteTrackInteractor> {
         FavouriteTrackInteractorImpl(get())
     }

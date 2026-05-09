@@ -7,6 +7,9 @@ import com.example.playlistmaker.mediateka.di.interactorMediaModule
 import com.example.playlistmaker.mediateka.di.repositoryMediaModule
 import com.example.playlistmaker.mediateka.di.viewModelMediatekaModule
 import com.example.playlistmaker.player.di.viewModelPlayerModule
+import com.example.playlistmaker.playlist.di.playlistInteractorModule
+import com.example.playlistmaker.playlist.di.playlistRepository
+import com.example.playlistmaker.playlist.di.viewModelPlaylistModule
 import com.example.playlistmaker.search.di.dataModule
 import com.example.playlistmaker.search.di.interactorModule
 import com.example.playlistmaker.search.di.repositoryModule
@@ -35,7 +38,8 @@ class App: Application(), KoinComponent {
                 viewModelPlayerModule, dataSettingsModule, repositorySettingsModule,
                 themeInteractorModule, viewModelSettingsModule, dataSharingModule,
                 sharingInteractorModule, viewModelMediatekaModule, dataMediaModule,
-                repositoryMediaModule, interactorMediaModule
+                repositoryMediaModule, interactorMediaModule, viewModelPlaylistModule,
+                playlistRepository, playlistInteractorModule
             )
         }
 

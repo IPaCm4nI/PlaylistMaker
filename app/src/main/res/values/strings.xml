@@ -29,4 +29,11 @@
     <string name="empty_mediateka">Ваша медиатека пуста</string>
     <string name="empty_playlists">Вы не создали \n ни одного плейлиста</string>
     <string name="new_playlists">Новый плейлист</string>
+    <string name="create">Создать</string>
+    <string name="title">Название*</string>
+    <string name="desc">Описание</string>
+    <string name="title_dialog_exit">Завершить создание плейлиста?</string>
+    <string name="message_dialog_exit">Все несохраненные данные будут потеряны</string>
+    <string name="cancel_dialog">Отмена</string>
+    <string name="ok">Завершить</string>
 </resources>

@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_mediatekaFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_mediatekaFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
     </fragment>
     <fragment
         android:id="@+id/playerFragment"
@@ -33,4 +36,9 @@
         android:name="com.example.playlistmaker.settings.ui.fragment.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmaker.playlist.ui.fragment.PlaylistFragment"
+        android:label="fragment_create_playlist"
+        tools:layout="@layout/fragment_create_playlist" />
 </navigation>
