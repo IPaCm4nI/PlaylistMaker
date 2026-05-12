@@ -9,8 +9,6 @@ import com.example.playlistmaker.playlist.domain.db.api.PlaylistRepository
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import androidx.room.withTransaction
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.collections.map
@@ -18,8 +16,7 @@ import kotlin.collections.map
 class PlaylistRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val playlistDbConvertor: PlaylistDbConvertor,
-    private val addedTrackDbConvertor: AddedTrackDbConvertor,
-    private val gson: Gson
+    private val addedTrackDbConvertor: AddedTrackDbConvertor
 ): PlaylistRepository {
     override suspend fun insertPlaylist(playlist: Playlist) {
         appDatabase.playlistDao().insertPlaylist(convertFromPlaylist(playlist))
@@ -30,34 +27,22 @@ class PlaylistRepositoryImpl(
             .map { playlists -> convertFromPlaylistEntity(playlists) }
     }
 
-    override suspend fun insertNewTrackInPlaylist(playlist: Playlist, track: Track): Boolean {
-        val currentTrackIds = getTrackIdsFromPlaylist(playlist).toMutableList()
+    override suspend fun insertNewTrackInPlaylist(playlistId: Int, track: Track): Boolean {
+        val playlistEntity = appDatabase.playlistDao().getPlaylistById(playlistId)
+        val playlist = playlistDbConvertor.map(playlistEntity)
 
-        currentTrackIds.add(track.trackId)
-
+        val updatedTrackIds = playlist.trackIds + track.trackId
         val updatedPlaylist = playlist.copy(
-            tracksInPlaylist = gson.toJson(currentTrackIds),
-            countTracks = currentTrackIds.size
+            trackIds = updatedTrackIds,
+            countTracks = updatedTrackIds.size
         )
 
         appDatabase.withTransaction {
-            appDatabase.playlistDao().updatePlaylist(
-                convertFromPlaylist(updatedPlaylist)
-            )
-
-            appDatabase.playlistDao().insertTrackInAddedTracks(
-                convertFromTrack(track)
-            )
+            appDatabase.playlistDao().updatePlaylist(convertFromPlaylist(updatedPlaylist))
+            appDatabase.playlistDao().insertTrackInAddedTracks(convertFromTrack(track))
         }
 
         return true
-    }
-
-    private fun getTrackIdsFromPlaylist(playlist: Playlist): List<Int> {
-        if (playlist.tracksInPlaylist.isBlank()) return emptyList()
-        val type = object : TypeToken<List<Int>>() {}.type
-
-        return gson.fromJson(playlist.tracksInPlaylist, type) ?: emptyList()
     }
 
     private fun convertFromTrack(track: Track): AddedTracksEntity {
@@ -69,6 +54,6 @@ class PlaylistRepositoryImpl(
     }
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
-        return playlists.map { playlist ->  playlistDbConvertor.map(playlist) }
+        return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
 }

@@ -76,7 +76,7 @@ class PlaylistFragment: Fragment() {
         }
 
         binding.enterTitle.addTextChangedListener{
-            binding.createButton.isEnabled = it?.isEmpty() != true
+            binding.createButton.isEnabled = it?.isBlank() != true
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -93,9 +93,7 @@ class PlaylistFragment: Fragment() {
                 Playlist(
                     namePlaylist = name,
                     descriptionPlaylist = binding.enterDescription.text.toString(),
-                    pathToImage = savedPath,
-                    tracksInPlaylist = "",
-                    countTracks = 0
+                    pathToImage = savedPath
                 )
             )
 

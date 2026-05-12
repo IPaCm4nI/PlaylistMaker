@@ -65,7 +65,7 @@ class PlayerFragment: Fragment() {
             bottomCallback()
         )
 
-        binding.apply {
+        with(binding) {
             recyclerPlaylistBottomSheet.adapter = playlistAdapter
             recyclerPlaylistBottomSheet.layoutManager = LinearLayoutManager(requireContext())
         }

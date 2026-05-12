@@ -12,8 +12,6 @@ import com.example.playlistmaker.player.ui.models.TrackInPlaylistState
 import com.example.playlistmaker.playlist.domain.db.api.PlaylistInteractor
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,7 +21,6 @@ import java.util.Locale
 class PlayerViewModel(
     private val url: String,
     private val mediaPlayer: MediaPlayer,
-    private val gson: Gson,
     private val favouriteTrackInteractor: FavouriteTrackInteractor,
     private val playlistInteractor: PlaylistInteractor
 ): ViewModel() {
@@ -167,9 +164,7 @@ class PlayerViewModel(
     }
 
     fun checkExistsTrack(playlist: Playlist, track: Track) {
-        val trackIds = getTrackIdsFromPlaylist(playlist)
-
-        val exists = trackIds.contains(track.trackId)
+        val exists = playlist.trackIds.contains(track.trackId)
 
         if (exists) {
             mutableExistsTrack.postValue(
@@ -177,21 +172,12 @@ class PlayerViewModel(
             )
         } else {
             viewModelScope.launch {
-                playlistInteractor.insertNewTrackInPlaylist(playlist, track)
+                playlistInteractor.insertNewTrackInPlaylist(playlist.id, track)
                 mutableExistsTrack.postValue(
                     TrackInPlaylistState.NotExists(playlist.namePlaylist)
                 )
             }
         }
-    }
-
-    private fun getTrackIdsFromPlaylist(playlist: Playlist): List<Int> {
-        if (playlist.tracksInPlaylist.isBlank()) {
-            return emptyList()
-        }
-
-        val type = object : TypeToken<List<Int>>() {}.type
-        return gson.fromJson(playlist.tracksInPlaylist, type) ?: emptyList()
     }
 
     companion object {

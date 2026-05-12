@@ -5,7 +5,6 @@ import com.example.playlistmaker.playlist.domain.db.api.PlaylistRepository
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class PlaylistInteractorImpl(
     private val playlistRepository: PlaylistRepository
@@ -18,7 +17,7 @@ class PlaylistInteractorImpl(
         return playlistRepository.getPlaylists()
     }
 
-    override suspend fun insertNewTrackInPlaylist(playlist: Playlist, track: Track): Boolean {
-        return playlistRepository.insertNewTrackInPlaylist(playlist, track)
+    override suspend fun insertNewTrackInPlaylist(playlistId: Int, track: Track): Boolean {
+        return playlistRepository.insertNewTrackInPlaylist(playlistId, track)
     }
 }
