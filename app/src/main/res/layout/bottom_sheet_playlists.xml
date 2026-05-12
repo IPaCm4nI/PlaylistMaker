@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:paddingVertical="@dimen/dp_8">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imagePlaylist"
+        android:layout_width="45dp"
+        android:layout_height="@dimen/dp_45"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginStart="@dimen/dp_13"
+        android:scaleType="centerCrop"
+
+        tools:src="@tools:sample/avatars"/>
+    
+    <LinearLayout
+        android:id="@+id/textContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_8"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/imagePlaylist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/imagePlaylist"
+        app:layout_constraintBottom_toBottomOf="@id/imagePlaylist">
+
+        <TextView
+            android:id="@+id/titlePlaylist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            style="@style/TextPlaylistBottomSheet"
+
+            tools:text="Best songs 2021"/>
+
+        <TextView
+            android:id="@+id/countTracks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            style="@style/TextCountTracksBottomSheet"
+
+            tools:text="98 tracks"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

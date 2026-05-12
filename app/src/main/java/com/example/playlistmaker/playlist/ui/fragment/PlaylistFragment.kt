@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -19,12 +18,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
-import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import com.example.playlistmaker.playlist.ui.view_model.PlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.getValue
@@ -82,31 +79,37 @@ class PlaylistFragment: Fragment() {
             binding.createButton.isEnabled = it?.isEmpty() != true
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback( callback)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         binding.placePicture.setOnClickListener {
             pickerImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.createButton.setOnClickListener {
-            selectedImage?.let { saveImageToApp(it) }
-
-            findNavController().navigateUp()
+            val savedPath = selectedImage?.let { saveImageToApp(it) } ?: ""
+            val name = binding.enterTitle.text.toString()
 
             viewModel.createPlaylist(
                 Playlist(
-                    namePlaylist = binding.enterTitle.text.toString(),
+                    namePlaylist = name,
                     descriptionPlaylist = binding.enterDescription.text.toString(),
-                    pathToImage = selectedImage?.toString() ?: "",
+                    pathToImage = savedPath,
                     tracksInPlaylist = "",
                     countTracks = 0
                 )
             )
 
             Toast
-                .makeText(requireContext(), "Плейлист ${binding.enterTitle.text}", Toast.LENGTH_LONG)
+                .makeText(requireContext(), getString(R.string.toast_playlist_created, name), Toast.LENGTH_LONG)
                 .show()
+
+            findNavController().navigateUp()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun showDialog() {
@@ -119,13 +122,13 @@ class PlaylistFragment: Fragment() {
         }
     }
 
-    private fun saveImageToApp(uri: Uri) {
+    private fun saveImageToApp(uri: Uri): String {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playmaker")
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
 
-        val fileImage = File(filePath, "${binding.enterTitle.text.toString()}.jpg")
+        val fileImage = File(filePath, "${System.currentTimeMillis()}.jpg")
 
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(fileImage)
@@ -133,5 +136,7 @@ class PlaylistFragment: Fragment() {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+
+        return fileImage.absolutePath
     }
 }

@@ -17,4 +17,8 @@ class PlaylistInteractorImpl(
     override fun getPlaylists(): Flow<List<Playlist>> {
         return playlistRepository.getPlaylists()
     }
+
+    override suspend fun insertNewTrackInPlaylist(playlist: Playlist, track: Track): Boolean {
+        return playlistRepository.insertNewTrackInPlaylist(playlist, track)
+    }
 }
