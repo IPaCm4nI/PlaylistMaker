@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
                 R.id.playerFragment -> binding.bottomNav.isVisible = false
+                R.id.playlistFragment -> binding.bottomNav.isVisible = false
                 else -> binding.bottomNav.isVisible = true
             }
         }

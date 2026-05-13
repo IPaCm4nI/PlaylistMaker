@@ -4,7 +4,6 @@ import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
 interface FavouriteTrackInteractor {
-
     suspend fun insertTrack(track: Track)
 
     suspend fun deleteTrack(trackId: Int)

@@ -27,7 +27,6 @@ class SearchFragment: Fragment() {
     private var searchText: String = SEARCH_DEF
     private lateinit var binding: FragmentSearchBinding
     private var textWatcher: TextWatcher? = null
-    private var isClickAllowed = true
     private val viewModel by viewModel<SongsViewModel>()
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 

@@ -6,7 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.mediateka.domain.db.api.FavouriteTrackInteractor
+import com.example.playlistmaker.mediateka.ui.models.PlaylistsState
 import com.example.playlistmaker.player.ui.models.PlayerState
+import com.example.playlistmaker.player.ui.models.TrackInPlaylistState
+import com.example.playlistmaker.playlist.domain.db.api.PlaylistInteractor
+import com.example.playlistmaker.playlist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,9 +21,11 @@ import java.util.Locale
 class PlayerViewModel(
     private val url: String,
     private val mediaPlayer: MediaPlayer,
-    private val favouriteTrackInteractor: FavouriteTrackInteractor
+    private val favouriteTrackInteractor: FavouriteTrackInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ): ViewModel() {
     private var timerJob: Job? = null
+    private var playlistsJob: Job? = null
     private val playerState = MutableLiveData<PlayerState>(
         PlayerState.Default()
     )
@@ -28,7 +34,17 @@ class PlayerViewModel(
     private val isFavourite = MutableLiveData<Boolean>()
     fun observerIsFavourite(): LiveData<Boolean> = isFavourite
 
+    private val mutablePlaylistsState = MutableLiveData<PlaylistsState>()
+    fun observerPlaylistsState(): LiveData<PlaylistsState> = mutablePlaylistsState
+
+    private val mutableExistsTrack = MutableLiveData<TrackInPlaylistState>()
+    fun observerExistsTrack(): LiveData<TrackInPlaylistState> = mutableExistsTrack
+
+    private var isPlayerInitialized = false
     fun preparePlayer() {
+        if (isPlayerInitialized) return
+        isPlayerInitialized = true
+
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
@@ -129,6 +145,38 @@ class PlayerViewModel(
             }
 
             isFavourite.postValue(!currentFavourite)
+        }
+    }
+
+    fun getPlaylists() {
+        playlistsJob?.cancel()
+        playlistsJob = viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { playlists ->
+                renderState(playlists)
+            }
+        }
+    }
+
+    private fun renderState(playlists: List<Playlist>) {
+        mutablePlaylistsState.postValue(
+            PlaylistsState.Content(playlists)
+        )
+    }
+
+    fun checkExistsTrack(playlist: Playlist, track: Track) {
+        val exists = playlist.trackIds.contains(track.trackId)
+
+        if (exists) {
+            mutableExistsTrack.postValue(
+                TrackInPlaylistState.Exists(playlist.namePlaylist)
+            )
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.insertNewTrackInPlaylist(playlist.id, track)
+                mutableExistsTrack.postValue(
+                    TrackInPlaylistState.NotExists(playlist.namePlaylist)
+                )
+            }
         }
     }
 
