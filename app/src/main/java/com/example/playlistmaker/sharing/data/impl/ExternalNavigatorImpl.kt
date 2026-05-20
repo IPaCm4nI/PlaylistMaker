@@ -38,4 +38,5 @@ class ExternalNavigatorImpl(
         chooser.addFlags(FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(chooser)
     }
+
 }

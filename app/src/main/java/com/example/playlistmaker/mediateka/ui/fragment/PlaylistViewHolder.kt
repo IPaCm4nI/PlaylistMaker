@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.playlist.domain.models.Playlist
+import com.example.playlistmaker.utils.toTracksCountString
 import java.io.File
 
 class PlaylistViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(
@@ -22,11 +23,7 @@ class PlaylistViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(
 
     fun bind(playlist: Playlist) {
         titlePlaylist.text = playlist.namePlaylist
-        countTracks.text = itemView.context.resources.getQuantityString(
-            R.plurals.tracks_count,
-            playlist.countTracks,
-            playlist.countTracks
-        )
+        countTracks.text = playlist.countTracks.toTracksCountString()
 
         Glide.with(itemView.context)
             .load(if (playlist.pathToImage.isNullOrEmpty()) null else File(playlist.pathToImage))

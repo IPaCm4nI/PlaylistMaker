@@ -9,6 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.BottomSheetPlaylistsBinding
 import com.example.playlistmaker.playlist.domain.models.Playlist
+import com.example.playlistmaker.utils.toTracksCountString
 import java.io.File
 
 class CreatePlaylistViewHolder(
@@ -30,11 +31,7 @@ class CreatePlaylistViewHolder(
             .into(binding.imagePlaylist)
 
         binding.titlePlaylist.text = playlist.namePlaylist
-        binding.countTracks.text = itemView.context.resources.getQuantityString(
-            R.plurals.tracks_count,
-            playlist.countTracks,
-            playlist.countTracks
-        )
+        binding.countTracks.text = playlist.countTracks.toTracksCountString()
     }
 
     companion object {

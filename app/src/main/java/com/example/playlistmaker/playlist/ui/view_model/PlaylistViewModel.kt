@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.playlist.domain.db.api.PlaylistInteractor
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.sharing.domain.api.ExternalNavigator
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     private val interactor: PlaylistInteractor,
+    private val externalNavigator: ExternalNavigator,
     private val playlistId: Int
 ) : ViewModel() {
 
@@ -39,6 +41,40 @@ class PlaylistViewModel(
                 mutableTracksLiveData.postValue(tracks)
 
             }
+        }
+    }
+
+    private val mutablePlaylistDeletedLiveData = MutableLiveData(false)
+    val playlistDeletedLiveData: LiveData<Boolean> = mutablePlaylistDeletedLiveData
+
+    fun sharePlaylist(chooserTitle: String) {
+        val tracks = mutableTracksLiveData.value ?: return
+        val playlist = mutablePlaylistLiveData.value ?: return
+        val sb = StringBuilder()
+        sb.appendLine(playlist.namePlaylist)
+        if (!playlist.descriptionPlaylist.isNullOrEmpty()) sb.appendLine(playlist.descriptionPlaylist)
+        sb.appendLine(getTracksCountText(tracks.size))
+        tracks.forEachIndexed { i, track ->
+            sb.appendLine("${i + 1}. ${track.artistName} - ${track.trackName} (${track.trackTimeMillis})")
+        }
+        externalNavigator.shareLink(chooserTitle, sb.toString().trimEnd())
+    }
+
+    private fun getTracksCountText(count: Int): String {
+        val lastTwo = count % 100
+        val last = count % 10
+        return "$count " + when {
+            lastTwo in 11..14 -> "треков"
+            last == 1 -> "трек"
+            last in 2..4 -> "трека"
+            else -> "треков"
+        }
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            interactor.deletePlaylist(playlistId)
+            mutablePlaylistDeletedLiveData.postValue(true)
         }
     }
 

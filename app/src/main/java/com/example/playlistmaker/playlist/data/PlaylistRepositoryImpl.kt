@@ -71,6 +71,17 @@ class PlaylistRepositoryImpl(
         }
     }
 
+    override suspend fun deletePlaylist(playlistId: Int) {
+        val playlistEntity = appDatabase.playlistDao().getPlaylistById(playlistId)
+        val playlist = playlistDbConvertor.map(playlistEntity)
+        appDatabase.playlistDao().deletePlaylist(playlistId)
+        playlist.trackIds.forEach { trackId ->
+            if (!isTrackInAnyPlaylist(trackId)) {
+                appDatabase.playlistDao().deleteAddedTrack(trackId)
+            }
+        }
+    }
+
     private suspend fun isTrackInAnyPlaylist(trackId: Int): Boolean {
         return appDatabase.playlistDao().getAllPlaylists().any { entity ->
             playlistDbConvertor.map(entity).trackIds.contains(trackId)

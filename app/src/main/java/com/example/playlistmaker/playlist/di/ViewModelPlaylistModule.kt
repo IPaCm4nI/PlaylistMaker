@@ -11,6 +11,6 @@ val viewModelPlaylistModule = module {
     }
 
     viewModel { params ->
-        PlaylistViewModel(get(), params.get())
+        PlaylistViewModel(get(), get(), params.get())
     }
 }

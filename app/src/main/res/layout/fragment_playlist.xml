@@ -132,13 +132,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#99000000"
-        android:visibility="gone" />
-
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -146,7 +139,8 @@
         android:background="@drawable/shape_bottom_sheet"
         android:orientation="vertical"
         app:behavior_hideable="false"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:visibility="gone">
 
         <View
             android:layout_width="@dimen/dp_50"
@@ -162,6 +156,101 @@
             android:layout_marginTop="@dimen/dp_12"
 
             tools:listitem="@layout/song"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <LinearLayout
+        android:id="@+id/menuBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="383dp"
+        android:orientation="vertical"
+        android:background="@drawable/shape_bottom_sheet"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_4"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp_8"
+            android:background="@drawable/rounder" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_12"
+            android:paddingBottom="@dimen/dp_8">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/menuPlaylistImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/dp_13"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="W,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/menuTextContainer"
+                app:layout_constraintBottom_toBottomOf="@id/menuTextContainer"
+                tools:src="@drawable/placeholder"/>
+
+            <LinearLayout
+                android:id="@+id/menuTextContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/menuPlaylistImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/menuPlaylistTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextPlaylistBottomSheet"
+                    tools:text="Best songs 2021"/>
+
+                <TextView
+                    android:id="@+id/menuPlaylistCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextCountTracksBottomSheet"
+                    tools:text="90 треков"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/menuShareItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextView.TextEdit"
+            android:text="@string/share_playlist" />
+
+        <TextView
+            android:id="@+id/menuEditItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextView.TextEdit"
+            android:text="@string/edit_playlist_info" />
+
+        <TextView
+            android:id="@+id/menuDeleteItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextView.TextEdit"
+            android:text="@string/delete_playlist" />
 
     </LinearLayout>
 
