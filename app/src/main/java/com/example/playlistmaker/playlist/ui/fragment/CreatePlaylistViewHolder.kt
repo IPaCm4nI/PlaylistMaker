@@ -11,7 +11,7 @@ import com.example.playlistmaker.databinding.BottomSheetPlaylistsBinding
 import com.example.playlistmaker.playlist.domain.models.Playlist
 import java.io.File
 
-class PlaylistViewHolder(
+class CreatePlaylistViewHolder(
     private val binding: BottomSheetPlaylistsBinding
 ): RecyclerView.ViewHolder(binding.root) {
     fun bind(playlist: Playlist) {
@@ -38,11 +38,11 @@ class PlaylistViewHolder(
     }
 
     companion object {
-        fun from(view: ViewGroup): PlaylistViewHolder {
+        fun from(view: ViewGroup): CreatePlaylistViewHolder {
             val inflater = LayoutInflater.from(view.context)
             val binding = BottomSheetPlaylistsBinding.inflate(inflater, view, false)
 
-            return PlaylistViewHolder(binding)
+            return CreatePlaylistViewHolder(binding)
         }
     }
 }

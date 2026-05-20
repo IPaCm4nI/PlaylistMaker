@@ -20,7 +20,7 @@ import com.example.playlistmaker.mediateka.ui.models.PlaylistsState
 import com.example.playlistmaker.player.ui.models.TrackInPlaylistState
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.playlist.domain.models.Playlist
-import com.example.playlistmaker.playlist.ui.fragment.PlaylistAdapter
+import com.example.playlistmaker.playlist.ui.fragment.CreatePlaylistAdapter
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -42,7 +42,7 @@ class PlayerFragment: Fragment() {
     }
     private val viewModel by viewModel<PlayerViewModel> { parametersOf(track.previewUrl) }
     private lateinit var binding: FragmentPlayerBinding
-    private val playlistAdapter = PlaylistAdapter {
+    private val playlistAdapter = CreatePlaylistAdapter {
         viewModel.checkExistsTrack(it, track)
     }
 

@@ -46,4 +46,7 @@
     <string name="toast_track_added">Добавлено в плейлист %s</string>
     <string name="toast_track_already_exists">Трек уже добавлен в плейлист %s</string>
     <string name="toast_playlist_created">Плейлист %s создан</string>
+    <string name="title_dialog_delete">Хотите удалить трек?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
 </resources>

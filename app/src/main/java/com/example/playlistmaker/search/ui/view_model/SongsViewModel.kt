@@ -24,6 +24,7 @@ class SongsViewModel(
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
     private var latestSearchText: String? = null
+    private var searchJob: Job? = null
     private val trackSearchDebounce = debounce<String>(
         SEARCH_DEBOUNCE_DELAY,
         viewModelScope,

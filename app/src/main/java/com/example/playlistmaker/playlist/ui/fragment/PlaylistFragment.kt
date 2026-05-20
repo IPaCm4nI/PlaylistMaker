@@ -1,107 +1,107 @@
 package com.example.playlistmaker.playlist.ui.fragment
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
-import com.example.playlistmaker.playlist.domain.models.Playlist
+import com.example.playlistmaker.databinding.FragmentPlaylistBinding
+import com.example.playlistmaker.player.ui.fragment.PlayerFragment
 import com.example.playlistmaker.playlist.ui.view_model.PlaylistViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.fragment.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
+import com.example.playlistmaker.utils.debounce
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.io.File
-import java.io.FileOutputStream
-import kotlin.getValue
 
-class PlaylistFragment: Fragment() {
-    private var _binding: FragmentCreatePlaylistBinding? = null
+class PlaylistFragment : Fragment() {
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
-    private var selectedImage: Uri? = null
-    private val pickerImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            binding.selectedImage.setImageURI(uri)
-            selectedImage = uri
-            binding.defaultImage.isVisible = false
-        }
+
+    private val viewModel by viewModel<PlaylistViewModel> {
+        parametersOf(requireArguments().getInt(KEY_PLAYLIST))
     }
 
-    private val callback = object: OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            showDialog()
-        }
-    }
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
-    private lateinit var confirmDialog: MaterialAlertDialogBuilder
-
-    private val viewModel by viewModel<PlaylistViewModel>()
+    private var bottomSheetAdapter = BottomSheetTrackAdapter(
+        clickListener = { onTrackClickDebounce(it) },
+        longClickListener = { track -> viewModel.deleteTrack(track) }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCreatePlaylistBinding.inflate(inflater)
-
+        _binding = FragmentPlaylistBinding.inflate(inflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.CustomMaterialAlertDialog)
-            .setTitle(requireContext().getString(R.string.title_dialog_exit))
-            .setMessage(requireContext().getString(R.string.message_dialog_exit))
-            .setNeutralButton(requireContext().getString(R.string.cancel_dialog)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(requireContext().getString(R.string.ok)) { _, _ ->
-                findNavController().navigateUp()
-            }
+        onTrackClickDebounce = debounce(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_playerFragment,
+                PlayerFragment.createArgs(track)
+            )
+        }
+
+        binding.recyclerBottomSheet.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerBottomSheet.adapter = bottomSheetAdapter
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+        bottomSheetBehavior.skipCollapsed = false
+        bottomSheetBehavior.addBottomSheetCallback(bottomCallback())
+        binding.root.doOnLayout {
+            val marginTop = resources.getDimensionPixelSize(R.dimen.dp_24)
+            bottomSheetBehavior.peekHeight =
+                binding.root.height - binding.shareButton.bottom - marginTop
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
 
         binding.backArrow.setOnClickListener {
-            showDialog()
+            findNavController().navigateUp()
         }
 
-        binding.enterTitle.addTextChangedListener{
-            binding.createButton.isEnabled = it?.isBlank() != true
+        viewModel.observerCountMinuteTracksLiveData.observe(viewLifecycleOwner) { countMinute ->
+            binding.countMinuteTracks.text = getMinutesText(countMinute)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
-        binding.placePicture.setOnClickListener {
-            pickerImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        viewModel.observerTracksLiveData.observe(viewLifecycleOwner) { tracks ->
+            bottomSheetAdapter.updateItem(tracks.toMutableList())
         }
 
-        binding.createButton.setOnClickListener {
-            val savedPath = selectedImage?.let { saveImageToApp(it) } ?: ""
-            val name = binding.enterTitle.text.toString()
-
-            viewModel.createPlaylist(
-                Playlist(
-                    namePlaylist = name,
-                    descriptionPlaylist = binding.enterDescription.text.toString(),
-                    pathToImage = savedPath
-                )
+        viewModel.observerPlaylistLiveData.observe(viewLifecycleOwner) { playlist ->
+            binding.titlePlaylist.text = playlist.namePlaylist
+            binding.descPlaylist.text = playlist.descriptionPlaylist
+            binding.countTracks.text = resources.getQuantityString(
+                R.plurals.tracks_count,
+                playlist.countTracks,
+                playlist.countTracks
             )
 
-            Toast
-                .makeText(requireContext(), getString(R.string.toast_playlist_created, name), Toast.LENGTH_LONG)
-                .show()
+            Glide.with(requireContext())
+                .load(if (playlist.pathToImage.isNullOrEmpty()) null else File(playlist.pathToImage))
+                .placeholder(R.drawable.placeholder)
+                .into(binding.imagePlaylist)
 
-            findNavController().navigateUp()
         }
     }
 
@@ -110,31 +110,45 @@ class PlaylistFragment: Fragment() {
         _binding = null
     }
 
-    private fun showDialog() {
-        if (selectedImage != null
-            || binding.enterTitle.text?.isNotEmpty() == true
-            || binding.enterDescription.text?.isNotEmpty() == true) {
-            confirmDialog.show()
-        } else {
-            findNavController().navigateUp()
+    private fun bottomCallback(): BottomSheetBehavior.BottomSheetCallback {
+        return object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        binding.overlay.isVisible = false
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        binding.overlay.isVisible = true
+                    }
+                    else -> Unit
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.isVisible = slideOffset > 0f
+            }
         }
     }
 
-    private fun saveImageToApp(uri: Uri): String {
-        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playmaker")
-        if (!filePath.exists()) {
-            filePath.mkdirs()
+    private fun getMinutesText(minutes: Int): String {
+        val lastTwoDigits = minutes % 100
+        val lastDigit = minutes % 10
+
+        val word = when {
+            lastTwoDigits in 11..14 -> "минут"
+            lastDigit == 1 -> "минута"
+            lastDigit in 2..4 -> "минуты"
+            else -> "минут"
         }
 
-        val fileImage = File(filePath, "${System.currentTimeMillis()}.jpg")
+        return "$minutes $word"
+    }
 
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(fileImage)
+    companion object {
+        private const val KEY_PLAYLIST = "PLAYLIST"
 
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-
-        return fileImage.absolutePath
+        fun createArgs(idPlaylist: Int): Bundle = bundleOf(
+            KEY_PLAYLIST to idPlaylist
+        )
     }
 }

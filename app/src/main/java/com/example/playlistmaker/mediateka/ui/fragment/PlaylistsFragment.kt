@@ -13,6 +13,7 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.mediateka.ui.models.PlaylistsState
 import com.example.playlistmaker.mediateka.ui.view_model.PlaylistsViewModel
 import com.example.playlistmaker.playlist.domain.models.Playlist
+import com.example.playlistmaker.playlist.ui.fragment.PlaylistFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -35,7 +36,12 @@ class PlaylistsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = PlaylistAdapter()
+        adapter = PlaylistAdapter { playlist ->
+            findNavController().navigate(
+                R.id.action_mediatekaFragment_to_playlistFragment2,
+                PlaylistFragment.createArgs(playlist.id)
+            )
+        }
 
         binding.recyclerPlaylists.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerPlaylists.adapter = adapter

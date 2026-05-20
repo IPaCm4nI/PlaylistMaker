@@ -333,4 +333,27 @@
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
+
+    <style name="TextTitlePlaylist">
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/sp_24</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="fontFamily">@font/ys_display_bold</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TextDescPlaylist">
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/sp_18</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>

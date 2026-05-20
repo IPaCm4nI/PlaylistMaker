@@ -5,9 +5,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.playlist.domain.models.Playlist
 
-class PlaylistAdapter(
+class CreatePlaylistAdapter(
     val clickListener: playlistClickListener
-): RecyclerView.Adapter<PlaylistViewHolder>() {
+): RecyclerView.Adapter<CreatePlaylistViewHolder>() {
 
     var listPlaylists: MutableList<Playlist> = mutableListOf()
 
@@ -45,10 +45,10 @@ class PlaylistAdapter(
     override fun onCreateViewHolder(
         view: ViewGroup,
         p1: Int
-    ): PlaylistViewHolder = PlaylistViewHolder.from(view)
+    ): CreatePlaylistViewHolder = CreatePlaylistViewHolder.from(view)
 
     override fun onBindViewHolder(
-        holder: PlaylistViewHolder,
+        holder: CreatePlaylistViewHolder,
         position: Int
     ) {
         holder.bind(listPlaylists[position])

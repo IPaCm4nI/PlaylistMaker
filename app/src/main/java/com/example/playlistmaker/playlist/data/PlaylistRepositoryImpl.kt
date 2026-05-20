@@ -27,6 +27,16 @@ class PlaylistRepositoryImpl(
             .map { playlists -> convertFromPlaylistEntity(playlists) }
     }
 
+    override fun getAddedTracks(idTracks: List<Int>): Flow<List<Track>> {
+        return appDatabase.playlistDao()
+            .getAddedTracks()
+            .map { tracks ->
+                tracks
+                    .filter { trackEntity -> idTracks.contains(trackEntity.id) }
+                    .map { trackEntity -> addedTrackDbConvertor.map(trackEntity) }
+            }
+    }
+
     override suspend fun insertNewTrackInPlaylist(playlistId: Int, track: Track): Boolean {
         val playlistEntity = appDatabase.playlistDao().getPlaylistById(playlistId)
         val playlist = playlistDbConvertor.map(playlistEntity)
@@ -45,11 +55,37 @@ class PlaylistRepositoryImpl(
         return true
     }
 
+    override suspend fun getPlaylistById(id: Int): Playlist {
+        return convertFromPlaylistEntity(appDatabase.playlistDao().getPlaylistById(id))
+    }
+
+    override suspend fun deleteTrack(trackId: Int, playlistId: Int) {
+        val playlistEntity = appDatabase.playlistDao().getPlaylistById(playlistId)
+        val playlist = playlistDbConvertor.map(playlistEntity)
+        val updatedIds = playlist.trackIds.filter { it != trackId }
+        val updatedPlaylist = playlist.copy(trackIds = updatedIds, countTracks = updatedIds.size)
+        appDatabase.playlistDao().updatePlaylist(convertFromPlaylist(updatedPlaylist))
+
+        if (!isTrackInAnyPlaylist(trackId)) {
+            appDatabase.playlistDao().deleteAddedTrack(trackId)
+        }
+    }
+
+    private suspend fun isTrackInAnyPlaylist(trackId: Int): Boolean {
+        return appDatabase.playlistDao().getAllPlaylists().any { entity ->
+            playlistDbConvertor.map(entity).trackIds.contains(trackId)
+        }
+    }
+
     private fun convertFromTrack(track: Track): AddedTracksEntity {
         return addedTrackDbConvertor.map(track)
     }
 
     private fun convertFromPlaylist(playlist: Playlist): PlaylistEntity {
+        return playlistDbConvertor.map(playlist)
+    }
+
+    private fun convertFromPlaylistEntity(playlist: PlaylistEntity): Playlist {
         return playlistDbConvertor.map(playlist)
     }
 
