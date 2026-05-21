@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             when(destination.id) {
                 R.id.playerFragment -> binding.bottomNav.isVisible = false
                 R.id.createPlaylistFragment -> binding.bottomNav.isVisible = false
+                R.id.editPlaylistFragment -> binding.bottomNav.isVisible = false
                 R.id.playlistFragment -> binding.bottomNav.isVisible = false
                 else -> binding.bottomNav.isVisible = true
             }

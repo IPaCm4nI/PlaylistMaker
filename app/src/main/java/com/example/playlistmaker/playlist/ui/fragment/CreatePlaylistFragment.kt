@@ -26,10 +26,10 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.getValue
 
-class CreatePlaylistFragment: Fragment() {
-    private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
-    private var selectedImage: Uri? = null
+open class CreatePlaylistFragment: Fragment() {
+    protected var _binding: FragmentCreatePlaylistBinding? = null
+    open val binding get() = _binding!!
+    protected var selectedImage: Uri? = null
     private val pickerImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             binding.selectedImage.setImageURI(uri)
@@ -40,13 +40,13 @@ class CreatePlaylistFragment: Fragment() {
 
     private val callback = object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            showDialog()
+            onBackPressed()
         }
     }
 
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
-    private val viewModel by viewModel<CreatePlaylistViewModel>()
+    protected open val viewModel by viewModel<CreatePlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +72,7 @@ class CreatePlaylistFragment: Fragment() {
             }
 
         binding.backArrow.setOnClickListener {
-            showDialog()
+            onBackPressed()
         }
 
         binding.enterTitle.addTextChangedListener{
@@ -86,22 +86,7 @@ class CreatePlaylistFragment: Fragment() {
         }
 
         binding.createButton.setOnClickListener {
-            val savedPath = selectedImage?.let { saveImageToApp(it) } ?: ""
-            val name = binding.enterTitle.text.toString()
-
-            viewModel.createPlaylist(
-                Playlist(
-                    namePlaylist = name,
-                    descriptionPlaylist = binding.enterDescription.text.toString(),
-                    pathToImage = savedPath
-                )
-            )
-
-            Toast
-                .makeText(requireContext(), getString(R.string.toast_playlist_created, name), Toast.LENGTH_LONG)
-                .show()
-
-            findNavController().navigateUp()
+            onCreateButtonClicked()
         }
     }
 
@@ -110,7 +95,7 @@ class CreatePlaylistFragment: Fragment() {
         _binding = null
     }
 
-    private fun showDialog() {
+    protected open fun onBackPressed() {
         if (selectedImage != null
             || binding.enterTitle.text?.isNotEmpty() == true
             || binding.enterDescription.text?.isNotEmpty() == true) {
@@ -120,7 +105,26 @@ class CreatePlaylistFragment: Fragment() {
         }
     }
 
-    private fun saveImageToApp(uri: Uri): String {
+    protected open fun onCreateButtonClicked() {
+        val savedPath = selectedImage?.let { saveImageToApp(it) } ?: ""
+        val name = binding.enterTitle.text.toString()
+
+        viewModel.createPlaylist(
+            Playlist(
+                namePlaylist = name,
+                descriptionPlaylist = binding.enterDescription.text.toString(),
+                pathToImage = savedPath
+            )
+        )
+
+        Toast
+            .makeText(requireContext(), getString(R.string.toast_playlist_created, name), Toast.LENGTH_LONG)
+            .show()
+
+        findNavController().navigateUp()
+    }
+
+    protected fun saveImageToApp(uri: Uri): String {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playmaker")
         if (!filePath.exists()) {
             filePath.mkdirs()

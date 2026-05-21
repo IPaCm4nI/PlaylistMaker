@@ -22,6 +22,10 @@ class PlaylistRepositoryImpl(
         appDatabase.playlistDao().insertPlaylist(convertFromPlaylist(playlist))
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        appDatabase.playlistDao().updatePlaylist(convertFromPlaylist(playlist))
+    }
+
     override fun getPlaylists(): Flow<List<Playlist>> {
         return appDatabase.playlistDao().getPlaylists()
             .map { playlists -> convertFromPlaylistEntity(playlists) }
@@ -31,8 +35,10 @@ class PlaylistRepositoryImpl(
         return appDatabase.playlistDao()
             .getAddedTracks()
             .map { tracks ->
-                tracks
-                    .filter { trackEntity -> idTracks.contains(trackEntity.id) }
+                val tracksById = tracks.associateBy { trackEntity -> trackEntity.id }
+                idTracks
+                    .asReversed()
+                    .mapNotNull { trackId -> tracksById[trackId] }
                     .map { trackEntity -> addedTrackDbConvertor.map(trackEntity) }
             }
     }

@@ -132,6 +132,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/tracksOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true" />
+
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -149,13 +158,29 @@
             android:layout_marginTop="@dimen/dp_8"
             android:background="@drawable/rounder" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerBottomSheet"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_12">
 
-            tools:listitem="@layout/song"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerBottomSheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/song"/>
+
+            <TextView
+                android:id="@+id/emptyTracksMessage"
+                style="@style/TextViewDefault.Placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:text="@string/empty_playlist_tracks"
+                android:textColor="?attr/colorSecondary"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

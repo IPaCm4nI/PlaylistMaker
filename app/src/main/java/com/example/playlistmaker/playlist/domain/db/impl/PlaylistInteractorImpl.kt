@@ -13,6 +13,10 @@ class PlaylistInteractorImpl(
         playlistRepository.insertPlaylist(playlist)
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        playlistRepository.updatePlaylist(playlist)
+    }
+
     override fun getPlaylists(): Flow<List<Playlist>> {
         return playlistRepository.getPlaylists()
     }

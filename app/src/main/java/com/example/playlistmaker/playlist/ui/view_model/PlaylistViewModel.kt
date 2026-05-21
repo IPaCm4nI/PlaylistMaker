@@ -44,6 +44,12 @@ class PlaylistViewModel(
         }
     }
 
+    fun refreshPlaylist() {
+        viewModelScope.launch {
+            mutablePlaylistLiveData.postValue(interactor.getPlaylistById(playlistId))
+        }
+    }
+
     private val mutablePlaylistDeletedLiveData = MutableLiveData(false)
     val playlistDeletedLiveData: LiveData<Boolean> = mutablePlaylistDeletedLiveData
 

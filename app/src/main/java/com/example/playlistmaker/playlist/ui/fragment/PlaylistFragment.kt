@@ -72,11 +72,25 @@ class PlaylistFragment : Fragment() {
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetBehavior.skipCollapsed = false
-        bottomSheetBehavior.addBottomSheetCallback(bottomCallback())
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                binding.tracksOverlay.isVisible = newState == BottomSheetBehavior.STATE_EXPANDED
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.tracksOverlay.alpha = slideOffset.coerceIn(0f, 1f)
+                binding.tracksOverlay.isVisible = slideOffset > 0f
+            }
+        })
         binding.root.doOnLayout {
             val marginTop = resources.getDimensionPixelSize(R.dimen.dp_24)
-            bottomSheetBehavior.peekHeight =
-                binding.root.height - binding.shareButton.bottom - marginTop
+            val peekHeight = binding.root.height - binding.shareButton.bottom - marginTop
+            bottomSheetBehavior.peekHeight = peekHeight
+            binding.emptyTracksMessage.doOnLayout { emptyMessage ->
+                val messageTopInSheet = binding.recyclerBottomSheet.top + emptyMessage.top
+                emptyMessage.translationY =
+                    ((peekHeight - emptyMessage.height) / 2f) - messageTopInSheet
+            }
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
@@ -118,12 +132,11 @@ class PlaylistFragment : Fragment() {
 
         binding.menuDeleteItem.setOnClickListener {
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            val playlistName = viewModel.observerPlaylistLiveData.value?.namePlaylist ?: ""
             MaterialAlertDialogBuilder(requireContext(), R.style.CustomMaterialAlertDialog)
                 .setTitle(getString(R.string.delete_playlist))
-                .setMessage("${getString(R.string.delete_playlist_message)} «$playlistName»?")
-                .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
-                .setPositiveButton(getString(R.string.yes)) { _, _ -> viewModel.deletePlaylist() }
+                .setMessage(getString(R.string.delete_playlist_message))
+                .setNegativeButton(getString(R.string.cancel_dialog)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.delete_playlist_confirm)) { _, _ -> viewModel.deletePlaylist() }
                 .show()
         }
 
@@ -136,6 +149,8 @@ class PlaylistFragment : Fragment() {
         }
 
         viewModel.observerTracksLiveData.observe(viewLifecycleOwner) { tracks ->
+            binding.recyclerBottomSheet.isVisible = tracks.isNotEmpty()
+            binding.emptyTracksMessage.isVisible = tracks.isEmpty()
             bottomSheetAdapter.updateItem(tracks.toMutableList())
         }
 
@@ -150,11 +165,25 @@ class PlaylistFragment : Fragment() {
                 .into(binding.imagePlaylist)
 
         }
+
+        binding.menuEditItem.setOnClickListener {
+            val playlist = viewModel.observerPlaylistLiveData.value ?: return@setOnClickListener
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_editPlaylistFragment,
+                EditPlaylistFragment.createArgs(playlist)
+            )
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshPlaylist()
     }
 
     private fun doShare() {
@@ -164,26 +193,6 @@ class PlaylistFragment : Fragment() {
             return
         }
         viewModel.sharePlaylist(getString(R.string.title_share))
-    }
-
-    private fun bottomCallback(): BottomSheetBehavior.BottomSheetCallback {
-        return object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        binding.overlay.isVisible = false
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        binding.overlay.isVisible = true
-                    }
-                    else -> Unit
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.isVisible = slideOffset > 0f
-            }
-        }
     }
 
     private fun getMinutesText(minutes: Int): String {
