@@ -23,7 +23,7 @@ class PlaylistViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(
 
     fun bind(playlist: Playlist) {
         titlePlaylist.text = playlist.namePlaylist
-        countTracks.text = playlist.countTracks.toTracksCountString()
+        countTracks.text = playlist.countTracks.toTracksCountString(itemView.context.resources)
 
         Glide.with(itemView.context)
             .load(if (playlist.pathToImage.isNullOrEmpty()) null else File(playlist.pathToImage))

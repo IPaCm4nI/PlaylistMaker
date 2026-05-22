@@ -31,7 +31,7 @@ class CreatePlaylistViewHolder(
             .into(binding.imagePlaylist)
 
         binding.titlePlaylist.text = playlist.namePlaylist
-        binding.countTracks.text = playlist.countTracks.toTracksCountString()
+        binding.countTracks.text = playlist.countTracks.toTracksCountString(itemView.context.resources)
     }
 
     companion object {

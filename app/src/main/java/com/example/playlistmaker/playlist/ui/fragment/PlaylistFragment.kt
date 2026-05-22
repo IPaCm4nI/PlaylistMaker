@@ -116,7 +116,7 @@ class PlaylistFragment : Fragment() {
         binding.editButton.setOnClickListener {
             viewModel.observerPlaylistLiveData.value?.let { playlist ->
                 binding.menuPlaylistTitle.text = playlist.namePlaylist
-                binding.menuPlaylistCount.text = playlist.countTracks.toTracksCountString()
+                binding.menuPlaylistCount.text = playlist.countTracks.toTracksCountString(resources)
                 Glide.with(requireContext())
                     .load(if (playlist.pathToImage.isNullOrEmpty()) null else File(playlist.pathToImage))
                     .placeholder(R.drawable.placeholder)
@@ -157,7 +157,7 @@ class PlaylistFragment : Fragment() {
         viewModel.observerPlaylistLiveData.observe(viewLifecycleOwner) { playlist ->
             binding.titlePlaylist.text = playlist.namePlaylist
             binding.descPlaylist.text = playlist.descriptionPlaylist
-            binding.countTracks.text = playlist.countTracks.toTracksCountString()
+            binding.countTracks.text = playlist.countTracks.toTracksCountString(resources)
 
             Glide.with(requireContext())
                 .load(if (playlist.pathToImage.isNullOrEmpty()) null else File(playlist.pathToImage))
@@ -196,17 +196,7 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun getMinutesText(minutes: Int): String {
-        val lastTwoDigits = minutes % 100
-        val lastDigit = minutes % 10
-
-        val word = when {
-            lastTwoDigits in 11..14 -> "минут"
-            lastDigit == 1 -> "минута"
-            lastDigit in 2..4 -> "минуты"
-            else -> "минут"
-        }
-
-        return "$minutes $word"
+        return resources.getQuantityString(R.plurals.minutes_count, minutes, minutes)
     }
 
     companion object {

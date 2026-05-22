@@ -9,4 +9,8 @@ class ResourceProviderImpl(
     override fun getString(id: Int): String {
         return context.getString(id)
     }
+
+    override fun getQuantityString(id: Int, quantity: Int, vararg formatArgs: Any): String {
+        return context.resources.getQuantityString(id, quantity, *formatArgs)
+    }
 }
