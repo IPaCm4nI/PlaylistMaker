@@ -13,4 +13,5 @@
     <color name="trackTint">#E6E8EB</color>
     <color name="button_ok_dialog">#22a540</color>
     <color name="button_neutral_dialog">#757575</color>
+    <color name="transparent">#00000000</color>
 </resources>

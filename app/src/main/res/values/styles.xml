@@ -129,6 +129,12 @@
         <item name="android:paddingTop">@dimen/dp_21</item>
     </style>
 
+    <style name="TextView.TextEdit" parent="TextViewDefault">
+        <item name="android:paddingStart">@dimen/dp_16</item>
+        <item name="android:paddingBottom">@dimen/dp_21</item>
+        <item name="android:paddingTop">@dimen/dp_21</item>
+    </style>
+
     <style name="EditText.Search" parent="TextViewGlobal">
         <item name="android:layout_width">match_parent</item>
         <item name="android:inputType">text</item>
@@ -279,9 +285,14 @@
         <item name="android:textColor">@color/button_neutral_dialog</item>
     </style>
 
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/button_neutral_dialog</item>
+    </style>
+
     <style name="CustomMaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
         <item name="buttonBarNeutralButtonStyle">@style/NeutralButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
     </style>
 
     <style name="RoundedPlaylistImage">
@@ -327,6 +338,29 @@
         <item name="android:letterSpacing">0</item>
         <item name="android:textColor">?attr/colorSecondaryVariant</item>
         <item name="android:textSize">@dimen/sp_11</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TextTitlePlaylist">
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/sp_24</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="fontFamily">@font/ys_display_bold</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TextDescPlaylist">
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/sp_18</item>
         <item name="android:textAllCaps">false</item>
         <item name="fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>

@@ -42,8 +42,26 @@
         <item quantity="many">%d треков</item>
         <item quantity="other">%d треков</item>
     </plurals>
+    <plurals name="minutes_count">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="toast_track_added">Добавлено в плейлист %s</string>
     <string name="toast_track_already_exists">Трек уже добавлен в плейлист %s</string>
     <string name="toast_playlist_created">Плейлист %s создан</string>
+    <string name="title_dialog_delete">Хотите удалить трек?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="empty_playlist_tracks">В этом плейлисте нет треков</string>
+    <string name="share_playlist">Поделиться</string>
+    <string name="share_playlist_empty">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="edit_playlist_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="delete_playlist_message">Вы уверены, что хотите удалить этот плейлист?</string>
+    <string name="delete_playlist_confirm">Удалить</string>
+    <string name="titleEditPlaylist">Редактировать</string>
+    <string name="saveEditPlaylist">Сохранить</string>
 </resources>

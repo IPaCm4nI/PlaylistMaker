@@ -226,6 +226,6 @@ class SearchFragment: Fragment() {
     companion object {
         const val KEY_SEARCH = "SEARCH"
         const val SEARCH_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

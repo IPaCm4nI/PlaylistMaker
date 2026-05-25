@@ -19,6 +19,7 @@ class SongRepositoryImpl(
     override fun findSongs(query: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(SongRequest(query))
         when (response.resultCode) {
+            -1 -> emit(Resource.Error("not_connection"))
             200 -> {
                 with(response as SongResponse) {
                     val idTracks = appDatabase.trackDao().getIdTrack()
@@ -48,7 +49,7 @@ class SongRepositoryImpl(
             }
 
             else -> {
-                emit(Resource.Error("not_connection"))
+                emit(Resource.Error("not_found"))
             }
         }
     }

@@ -28,7 +28,7 @@ class MediatekaFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = FragmentsAdapter(requireActivity())
+        val adapter = FragmentsAdapter(this)
         binding.viewPager.adapter = adapter
 
         tabLayout = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, pos ->

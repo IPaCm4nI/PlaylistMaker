@@ -5,7 +5,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.playlist.domain.models.Playlist
 
-class PlaylistAdapter: RecyclerView.Adapter<PlaylistViewHolder> () {
+class PlaylistAdapter(
+    val clickListener: playlistClickListener
+): RecyclerView.Adapter<PlaylistViewHolder> () {
 
     var listPlaylists: MutableList<Playlist> = mutableListOf()
 
@@ -46,9 +48,16 @@ class PlaylistAdapter: RecyclerView.Adapter<PlaylistViewHolder> () {
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         holder.bind(listPlaylists[position])
+        holder.itemView.setOnClickListener {
+            clickListener.onPlaylistClick(listPlaylists[position])
+        }
     }
 
     override fun getItemCount(): Int {
         return listPlaylists.size
+    }
+
+    fun interface playlistClickListener {
+        fun onPlaylistClick(playlist: Playlist)
     }
 }

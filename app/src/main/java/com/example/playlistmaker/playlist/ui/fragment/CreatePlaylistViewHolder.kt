@@ -9,9 +9,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.BottomSheetPlaylistsBinding
 import com.example.playlistmaker.playlist.domain.models.Playlist
+import com.example.playlistmaker.utils.toTracksCountString
 import java.io.File
 
-class PlaylistViewHolder(
+class CreatePlaylistViewHolder(
     private val binding: BottomSheetPlaylistsBinding
 ): RecyclerView.ViewHolder(binding.root) {
     fun bind(playlist: Playlist) {
@@ -30,19 +31,15 @@ class PlaylistViewHolder(
             .into(binding.imagePlaylist)
 
         binding.titlePlaylist.text = playlist.namePlaylist
-        binding.countTracks.text = itemView.context.resources.getQuantityString(
-            R.plurals.tracks_count,
-            playlist.countTracks,
-            playlist.countTracks
-        )
+        binding.countTracks.text = playlist.countTracks.toTracksCountString(itemView.context.resources)
     }
 
     companion object {
-        fun from(view: ViewGroup): PlaylistViewHolder {
+        fun from(view: ViewGroup): CreatePlaylistViewHolder {
             val inflater = LayoutInflater.from(view.context)
             val binding = BottomSheetPlaylistsBinding.inflate(inflater, view, false)
 
-            return PlaylistViewHolder(binding)
+            return CreatePlaylistViewHolder(binding)
         }
     }
 }
