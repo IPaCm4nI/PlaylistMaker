@@ -17,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.mediateka.ui.models.PlaylistsState
+import com.example.playlistmaker.player.ui.models.PlayerState
 import com.example.playlistmaker.player.ui.models.TrackInPlaylistState
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.playlist.domain.models.Playlist
@@ -85,7 +86,8 @@ class PlayerFragment: Fragment() {
             )
         }
 
-        binding.playButton.setOnClickListener {
+        binding.playButton.onStateChanged = {
+            android.util.Log.d("PLAYER", "onStateChanged вызван")
             viewModel.onPlayButtonClicked()
         }
 
@@ -100,7 +102,8 @@ class PlayerFragment: Fragment() {
         viewModel.preparePlayer()
 
         viewModel.observerPlayerState().observe(viewLifecycleOwner) {
-            binding.playButton.isSelected = !it.isPlayButton
+            binding.playButton.isEnabled = it !is PlayerState.Default
+            binding.playButton.setIsPlaying(!it.isPlayButton)
             binding.currentTime.text = it.progress
         }
 
