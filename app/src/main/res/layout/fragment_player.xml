@@ -79,15 +79,19 @@
                     app:layout_constraintStart_toStartOf="@id/leftLine"
                     app:layout_constraintTop_toBottomOf="@id/tvNameGroup"  />
 
-                <ImageView
+                <com.example.playlistmaker.player.ui.customviews.PlaybackButtonView
                     android:id="@+id/playButton"
                     style="@style/LayoutWrap"
                     android:layout_marginTop="@dimen/dp_39"
-                    app:srcCompat="@drawable/selector_play"
+
+                    app:imagePlayResId="@drawable/play_button"
+                    app:imageStopResId="@drawable/stop_button"
+
                     app:layout_constraintTop_toBottomOf="@id/tvNameGroup"
                     app:layout_constraintStart_toEndOf="@id/addButton"
-                    android:enabled ="false"
                     app:layout_constraintEnd_toStartOf="@id/favoriteButton"
+
+                    android:enabled ="false"
                     app:layout_constraintHorizontal_chainStyle="spread"/>
 
                 <ImageButton
@@ -287,7 +291,7 @@
         app:behavior_hideable="true"
         app:behavior_peekHeight="@dimen/dp_505"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <View
             android:layout_width="@dimen/dp_50"

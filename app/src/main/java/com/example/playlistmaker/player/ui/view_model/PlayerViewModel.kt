@@ -96,6 +96,7 @@ class PlayerViewModel(
     }
 
     fun onPlayButtonClicked() {
+        android.util.Log.d("PLAYER", "onPlayButtonClicked, state=${playerState.value}")
         when(playerState.value) {
             is PlayerState.Playing -> {
                 pausePlayer()
